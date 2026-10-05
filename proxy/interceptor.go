@@ -28,6 +28,7 @@ import (
 	"go.temporal.io/api/query/v1"
 	"go.temporal.io/api/schedule/v1"
 	"go.temporal.io/api/sdk/v1"
+	"go.temporal.io/api/stream/v1"
 	"go.temporal.io/api/update/v1"
 	"go.temporal.io/api/workflow/v1"
 	workflowservice "go.temporal.io/api/workflowservice/v1"
@@ -3575,6 +3576,38 @@ func visitPayloads(
 				if err := visitPayload(ctx, options, o, concState, &o.Summary); err != nil {
 					return err
 				}
+			}
+
+			ctx.Context = prevCtx
+
+		case *stream.StreamRecord:
+
+			if o == nil {
+				continue
+			}
+
+			prevCtx := ctx.Context
+			if options.ContextHook != nil {
+				var hookErr error
+				if ctx.Context, hookErr = options.ContextHook(prevCtx, o); hookErr != nil {
+					return hookErr
+				}
+			}
+
+			if o.Body != nil {
+				if err := visitPayload(ctx, options, o, concState, &o.Body); err != nil {
+					return err
+				}
+			}
+
+			if err := visitPayloads(
+				ctx,
+				options,
+				o,
+				concState,
+				o.GetMetadata(),
+			); err != nil {
+				return err
 			}
 
 			ctx.Context = prevCtx
