@@ -22,6 +22,7 @@ import (
 	"go.temporal.io/api/history/v1"
 	"go.temporal.io/api/nexus/v1"
 	"go.temporal.io/api/nexusoperation/v1"
+	"go.temporal.io/api/notification/v1"
 	"go.temporal.io/api/notificationservice/v1"
 	"go.temporal.io/api/operatorservice/v1"
 	"go.temporal.io/api/protocol/v1"
@@ -2173,6 +2174,7 @@ func visitPayloads(
 				o.GetWorkflowPropertiesModifiedEventAttributes(),
 				o.GetWorkflowPropertiesModifiedExternallyEventAttributes(),
 				o.GetWorkflowTaskFailedEventAttributes(),
+				o.GetWorkflowTaskScheduledEventAttributes(),
 			); err != nil {
 				return err
 			}
@@ -2874,6 +2876,32 @@ func visitPayloads(
 
 			ctx.Context = prevCtx
 
+		case *history.WorkflowTaskScheduledEventAttributes:
+
+			if o == nil {
+				continue
+			}
+
+			prevCtx := ctx.Context
+			if options.ContextHook != nil {
+				var hookErr error
+				if ctx.Context, hookErr = options.ContextHook(prevCtx, o); hookErr != nil {
+					return hookErr
+				}
+			}
+
+			if err := visitPayloads(
+				ctx,
+				options,
+				o,
+				concState,
+				o.GetNotifications(),
+			); err != nil {
+				return err
+			}
+
+			ctx.Context = prevCtx
+
 		case []*nexus.Endpoint:
 			for _, x := range o {
 				if err := visitPayloads(ctx, options, parent, concState, x); err != nil {
@@ -3167,6 +3195,39 @@ func visitPayloads(
 				o,
 				concState,
 				o.GetInfo(),
+			); err != nil {
+				return err
+			}
+
+			ctx.Context = prevCtx
+
+		case []*notification.Notification:
+			for _, x := range o {
+				if err := visitPayloads(ctx, options, parent, concState, x); err != nil {
+					return err
+				}
+			}
+
+		case *notification.Notification:
+
+			if o == nil {
+				continue
+			}
+
+			prevCtx := ctx.Context
+			if options.ContextHook != nil {
+				var hookErr error
+				if ctx.Context, hookErr = options.ContextHook(prevCtx, o); hookErr != nil {
+					return hookErr
+				}
+			}
+
+			if err := visitPayloads(
+				ctx,
+				options,
+				o,
+				concState,
+				o.GetMetadata(),
 			); err != nil {
 				return err
 			}
