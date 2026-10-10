@@ -28,6 +28,7 @@ import (
 	"go.temporal.io/api/query/v1"
 	"go.temporal.io/api/schedule/v1"
 	"go.temporal.io/api/sdk/v1"
+	"go.temporal.io/api/stream/v1"
 	"go.temporal.io/api/update/v1"
 	"go.temporal.io/api/workflow/v1"
 	workflowservice "go.temporal.io/api/workflowservice/v1"
@@ -2173,6 +2174,7 @@ func visitPayloads(
 				o.GetWorkflowPropertiesModifiedEventAttributes(),
 				o.GetWorkflowPropertiesModifiedExternallyEventAttributes(),
 				o.GetWorkflowTaskFailedEventAttributes(),
+				o.GetWorkflowTaskScheduledEventAttributes(),
 			); err != nil {
 				return err
 			}
@@ -2874,6 +2876,32 @@ func visitPayloads(
 
 			ctx.Context = prevCtx
 
+		case *history.WorkflowTaskScheduledEventAttributes:
+
+			if o == nil {
+				continue
+			}
+
+			prevCtx := ctx.Context
+			if options.ContextHook != nil {
+				var hookErr error
+				if ctx.Context, hookErr = options.ContextHook(prevCtx, o); hookErr != nil {
+					return hookErr
+				}
+			}
+
+			if err := visitPayloads(
+				ctx,
+				options,
+				o,
+				concState,
+				o.GetNexusOperationProgress(),
+			); err != nil {
+				return err
+			}
+
+			ctx.Context = prevCtx
+
 		case []*nexus.Endpoint:
 			for _, x := range o {
 				if err := visitPayloads(ctx, options, parent, concState, x); err != nil {
@@ -3011,6 +3039,39 @@ func visitPayloads(
 				o,
 				concState,
 				o.GetSearchAttributes(),
+			); err != nil {
+				return err
+			}
+
+			ctx.Context = prevCtx
+
+		case []*nexus.NexusOperationProgress:
+			for _, x := range o {
+				if err := visitPayloads(ctx, options, parent, concState, x); err != nil {
+					return err
+				}
+			}
+
+		case *nexus.NexusOperationProgress:
+
+			if o == nil {
+				continue
+			}
+
+			prevCtx := ctx.Context
+			if options.ContextHook != nil {
+				var hookErr error
+				if ctx.Context, hookErr = options.ContextHook(prevCtx, o); hookErr != nil {
+					return hookErr
+				}
+			}
+
+			if err := visitPayloads(
+				ctx,
+				options,
+				o,
+				concState,
+				o.GetMetadata(),
 			); err != nil {
 				return err
 			}
@@ -3207,6 +3268,38 @@ func visitPayloads(
 				o,
 				concState,
 				o.GetFailure(),
+			); err != nil {
+				return err
+			}
+
+			ctx.Context = prevCtx
+
+		case *notificationservice.OnProgressRequest:
+
+			if o == nil {
+				continue
+			}
+
+			prevCtx := ctx.Context
+			if options.ContextHook != nil {
+				var hookErr error
+				if ctx.Context, hookErr = options.ContextHook(prevCtx, o); hookErr != nil {
+					return hookErr
+				}
+			}
+
+			if o.SourceContext != nil {
+				if err := visitPayload(ctx, options, o, concState, &o.SourceContext); err != nil {
+					return err
+				}
+			}
+
+			if err := visitPayloads(
+				ctx,
+				options,
+				o,
+				concState,
+				o.GetProgress(),
 			); err != nil {
 				return err
 			}
@@ -3635,6 +3728,40 @@ func visitPayloads(
 				if err := visitPayload(ctx, options, o, concState, &o.Summary); err != nil {
 					return err
 				}
+			}
+
+			ctx.Context = prevCtx
+
+		case []*stream.StreamCallbackInfo:
+			for _, x := range o {
+				if err := visitPayloads(ctx, options, parent, concState, x); err != nil {
+					return err
+				}
+			}
+
+		case *stream.StreamCallbackInfo:
+
+			if o == nil {
+				continue
+			}
+
+			prevCtx := ctx.Context
+			if options.ContextHook != nil {
+				var hookErr error
+				if ctx.Context, hookErr = options.ContextHook(prevCtx, o); hookErr != nil {
+					return hookErr
+				}
+			}
+
+			if err := visitPayloads(
+				ctx,
+				options,
+				o,
+				concState,
+				o.GetCallback(),
+				o.GetLastAttemptFailure(),
+			); err != nil {
+				return err
 			}
 
 			ctx.Context = prevCtx
@@ -4492,6 +4619,32 @@ func visitPayloads(
 
 			ctx.Context = prevCtx
 
+		case *workflowservice.DescribeStreamNotifierResponse:
+
+			if o == nil {
+				continue
+			}
+
+			prevCtx := ctx.Context
+			if options.ContextHook != nil {
+				var hookErr error
+				if ctx.Context, hookErr = options.ContextHook(prevCtx, o); hookErr != nil {
+					return hookErr
+				}
+			}
+
+			if err := visitPayloads(
+				ctx,
+				options,
+				o,
+				concState,
+				o.GetCallbacks(),
+			); err != nil {
+				return err
+			}
+
+			ctx.Context = prevCtx
+
 		case *workflowservice.DescribeWorkerDeploymentVersionResponse:
 
 			if o == nil {
@@ -4948,6 +5101,38 @@ func visitPayloads(
 				o,
 				concState,
 				o.GetExecutions(),
+			); err != nil {
+				return err
+			}
+
+			ctx.Context = prevCtx
+
+		case *workflowservice.NotifyStreamRequest:
+
+			if o == nil {
+				continue
+			}
+
+			prevCtx := ctx.Context
+			if options.ContextHook != nil {
+				var hookErr error
+				if ctx.Context, hookErr = options.ContextHook(prevCtx, o); hookErr != nil {
+					return hookErr
+				}
+			}
+
+			if o.CloseResult != nil {
+				if err := visitPayload(ctx, options, o, concState, &o.CloseResult); err != nil {
+					return err
+				}
+			}
+
+			if err := visitPayloads(
+				ctx,
+				options,
+				o,
+				concState,
+				o.GetMetadata(),
 			); err != nil {
 				return err
 			}
@@ -6796,6 +6981,26 @@ func visitFailures(ctx *VisitFailuresContext, options *VisitFailuresOptions, obj
 				return err
 			}
 
+		case []*stream.StreamCallbackInfo:
+			for _, x := range o {
+				if err := visitFailures(ctx, options, x); err != nil {
+					return err
+				}
+			}
+
+		case *stream.StreamCallbackInfo:
+			if o == nil {
+				continue
+			}
+			ctx.Parent = o
+			if err := visitFailures(
+				ctx,
+				options,
+				o.GetLastAttemptFailure(),
+			); err != nil {
+				return err
+			}
+
 		case *update.Outcome:
 			if o == nil {
 				continue
@@ -6935,6 +7140,19 @@ func visitFailures(ctx *VisitFailuresContext, options *VisitFailuresOptions, obj
 				o.GetCompletionCallbacks(),
 				o.GetFailure(),
 				o.GetInfo(),
+			); err != nil {
+				return err
+			}
+
+		case *workflowservice.DescribeStreamNotifierResponse:
+			if o == nil {
+				continue
+			}
+			ctx.Parent = o
+			if err := visitFailures(
+				ctx,
+				options,
+				o.GetCallbacks(),
 			); err != nil {
 				return err
 			}

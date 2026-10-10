@@ -32,6 +32,10 @@ func NewWorkflowServiceProxyServer(options WorkflowServiceProxyOptions) (workflo
 	}, nil
 }
 
+func (s *workflowServiceProxyServer) AttachStreamCallback(ctx context.Context, in0 *workflowservice.AttachStreamCallbackRequest) (*workflowservice.AttachStreamCallbackResponse, error) {
+	return s.client.AttachStreamCallback(s.reqCtx(ctx), in0)
+}
+
 func (s *workflowServiceProxyServer) CountActivityExecutions(ctx context.Context, in0 *workflowservice.CountActivityExecutionsRequest) (*workflowservice.CountActivityExecutionsResponse, error) {
 	return s.client.CountActivityExecutions(s.reqCtx(ctx), in0)
 }
@@ -124,6 +128,10 @@ func (s *workflowServiceProxyServer) DescribeSchedule(ctx context.Context, in0 *
 	return s.client.DescribeSchedule(s.reqCtx(ctx), in0)
 }
 
+func (s *workflowServiceProxyServer) DescribeStreamNotifier(ctx context.Context, in0 *workflowservice.DescribeStreamNotifierRequest) (*workflowservice.DescribeStreamNotifierResponse, error) {
+	return s.client.DescribeStreamNotifier(s.reqCtx(ctx), in0)
+}
+
 func (s *workflowServiceProxyServer) DescribeTaskQueue(ctx context.Context, in0 *workflowservice.DescribeTaskQueueRequest) (*workflowservice.DescribeTaskQueueResponse, error) {
 	return s.client.DescribeTaskQueue(s.reqCtx(ctx), in0)
 }
@@ -146,6 +154,10 @@ func (s *workflowServiceProxyServer) DescribeWorkflowExecution(ctx context.Conte
 
 func (s *workflowServiceProxyServer) DescribeWorkflowRule(ctx context.Context, in0 *workflowservice.DescribeWorkflowRuleRequest) (*workflowservice.DescribeWorkflowRuleResponse, error) {
 	return s.client.DescribeWorkflowRule(s.reqCtx(ctx), in0)
+}
+
+func (s *workflowServiceProxyServer) DetachStreamCallback(ctx context.Context, in0 *workflowservice.DetachStreamCallbackRequest) (*workflowservice.DetachStreamCallbackResponse, error) {
+	return s.client.DetachStreamCallback(s.reqCtx(ctx), in0)
 }
 
 func (s *workflowServiceProxyServer) ExecuteMultiOperation(ctx context.Context, in0 *workflowservice.ExecuteMultiOperationRequest) (*workflowservice.ExecuteMultiOperationResponse, error) {
@@ -254,6 +266,10 @@ func (s *workflowServiceProxyServer) ListWorkflowExecutions(ctx context.Context,
 
 func (s *workflowServiceProxyServer) ListWorkflowRules(ctx context.Context, in0 *workflowservice.ListWorkflowRulesRequest) (*workflowservice.ListWorkflowRulesResponse, error) {
 	return s.client.ListWorkflowRules(s.reqCtx(ctx), in0)
+}
+
+func (s *workflowServiceProxyServer) NotifyStream(ctx context.Context, in0 *workflowservice.NotifyStreamRequest) (*workflowservice.NotifyStreamResponse, error) {
+	return s.client.NotifyStream(s.reqCtx(ctx), in0)
 }
 
 func (s *workflowServiceProxyServer) PatchSchedule(ctx context.Context, in0 *workflowservice.PatchScheduleRequest) (*workflowservice.PatchScheduleResponse, error) {
