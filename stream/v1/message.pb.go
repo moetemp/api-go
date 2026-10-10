@@ -104,8 +104,10 @@ func (x *StreamReference) GetTopic() string {
 type StreamCallbackInfo struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// The request ID the callback was attached with.
-	RequestId string        `protobuf:"bytes,1,opt,name=request_id,json=requestId,proto3" json:"request_id,omitempty"`
-	Callback  *v11.Callback `protobuf:"bytes,2,opt,name=callback,proto3" json:"callback,omitempty"`
+	RequestId string `protobuf:"bytes,1,opt,name=request_id,json=requestId,proto3" json:"request_id,omitempty"`
+	// The callback. Its header keeps its keys, but every value is empty, since the values hold
+	// the caller's credentials.
+	Callback *v11.Callback `protobuf:"bytes,2,opt,name=callback,proto3" json:"callback,omitempty"`
 	// The state of the callback's completion delivery.
 	State v1.CallbackState `protobuf:"varint,3,opt,name=state,proto3,enum=temporal.api.enums.v1.CallbackState" json:"state,omitempty"`
 	// The highest counter delivered to the callback as progress.

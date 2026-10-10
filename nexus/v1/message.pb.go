@@ -345,7 +345,8 @@ func (x *Link) GetType() string {
 type NexusOperationProgress struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// The operation this progress belongs to. A handler leaves it unset, since the callback already
-	// identifies the operation. The server sets it when it hands progress to a caller.
+	// identifies the operation. The server sets it when it hands progress to a caller. A oneof, so
+	// a later case can name an operation that no Workflow schedules, such as a standalone one.
 	//
 	// Types that are valid to be assigned to Operation:
 	//
