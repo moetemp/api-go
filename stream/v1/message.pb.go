@@ -32,8 +32,9 @@ type StreamReference struct {
 	OwnerKind v1.StreamOwnerKind     `protobuf:"varint,1,opt,name=owner_kind,json=ownerKind,proto3,enum=temporal.api.enums.v1.StreamOwnerKind" json:"owner_kind,omitempty"`
 	// The owning Workflow, for `STREAM_OWNER_KIND_WORKFLOW`.
 	WorkflowId string `protobuf:"bytes,2,opt,name=workflow_id,json=workflowId,proto3" json:"workflow_id,omitempty"`
-	// Pins the stream to one run of the owning Workflow. Empty follows the run chain. A stream
-	// notifier is keyed without it, so one notifier serves the stream across runs.
+	// The id of the first run in the owning Workflow's run chain. The stream notifier is keyed by
+	// it, so one notifier serves the stream across the chain's runs, and a stream that reuses the
+	// Workflow id in a new chain gets a notifier of its own. An empty run id is refused.
 	RunId string `protobuf:"bytes,3,opt,name=run_id,json=runId,proto3" json:"run_id,omitempty"`
 	// The stream's topic within its owner.
 	Topic         string `protobuf:"bytes,4,opt,name=topic,proto3" json:"topic,omitempty"`
