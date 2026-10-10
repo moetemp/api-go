@@ -352,7 +352,8 @@ type NexusOperationProgress struct {
 	//	*NexusOperationProgress_ScheduledEventId
 	Operation isNexusOperationProgress_Operation `protobuf_oneof:"operation"`
 	// Where the operation's output stands after the change this progress reports, in the
-	// handler's terms, such as a stream cursor. Opaque to the server.
+	// handler's terms, such as a stream cursor. Opaque to the server, which rejects a position
+	// longer than 1 KiB of UTF-8.
 	Position string `protobuf:"bytes,2,opt,name=position,proto3" json:"position,omitempty"`
 	// Orders the progress of one operation. Among progress folded together, the highest counter
 	// is kept. Must be positive.
