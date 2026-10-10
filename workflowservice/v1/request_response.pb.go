@@ -19521,13 +19521,15 @@ type NotifyStreamRequest struct {
 	state     protoimpl.MessageState `protogen:"open.v1"`
 	Namespace string                 `protobuf:"bytes,1,opt,name=namespace,proto3" json:"namespace,omitempty"`
 	StreamRef *v124.StreamReference  `protobuf:"bytes,2,opt,name=stream_ref,json=streamRef,proto3" json:"stream_ref,omitempty"`
-	// Where the stream stands after the append this notification reports, in the producer's terms.
-	Position []byte `protobuf:"bytes,3,opt,name=position,proto3" json:"position,omitempty"`
+	// Where the stream stands after the append this notification reports, in the producer's terms,
+	// such as a stream cursor. Passed on to the callbacks as the progress position.
+	Position string `protobuf:"bytes,3,opt,name=position,proto3" json:"position,omitempty"`
 	// Orders the notifications of one stream. The notifier keeps the highest counter it has seen
 	// and ignores a lower one, so a producer may send them out of order. Must be positive.
 	Counter int64 `protobuf:"varint,4,opt,name=counter,proto3" json:"counter,omitempty"`
-	// Small details passed on to the callbacks. The server rejects metadata over 2 KiB in total.
-	Metadata map[string]*v14.Payload `protobuf:"bytes,5,rep,name=metadata,proto3" json:"metadata,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
+	// Small details passed on to the callbacks. The server rejects metadata whose keys and values
+	// exceed 2 KiB in total, counted as UTF-8 bytes.
+	Metadata map[string]string `protobuf:"bytes,5,rep,name=metadata,proto3" json:"metadata,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
 	// Closes the stream: the notifier completes every attached callback with `close_result`, and
 	// completes callbacks attached later right away.
 	Close bool `protobuf:"varint,6,opt,name=close,proto3" json:"close,omitempty"`
@@ -19583,11 +19585,11 @@ func (x *NotifyStreamRequest) GetStreamRef() *v124.StreamReference {
 	return nil
 }
 
-func (x *NotifyStreamRequest) GetPosition() []byte {
+func (x *NotifyStreamRequest) GetPosition() string {
 	if x != nil {
 		return x.Position
 	}
-	return nil
+	return ""
 }
 
 func (x *NotifyStreamRequest) GetCounter() int64 {
@@ -19597,7 +19599,7 @@ func (x *NotifyStreamRequest) GetCounter() int64 {
 	return 0
 }
 
-func (x *NotifyStreamRequest) GetMetadata() map[string]*v14.Payload {
+func (x *NotifyStreamRequest) GetMetadata() map[string]string {
 	if x != nil {
 		return x.Metadata
 	}
@@ -19718,7 +19720,7 @@ type DescribeStreamNotifierResponse struct {
 	// The highest counter the notifier has seen.
 	Counter int64 `protobuf:"varint,1,opt,name=counter,proto3" json:"counter,omitempty"`
 	// The position that came with `counter`.
-	Position []byte `protobuf:"bytes,2,opt,name=position,proto3" json:"position,omitempty"`
+	Position string `protobuf:"bytes,2,opt,name=position,proto3" json:"position,omitempty"`
 	// Whether the stream was closed.
 	Closed bool `protobuf:"varint,3,opt,name=closed,proto3" json:"closed,omitempty"`
 	// The callbacks the notifier holds, in the order they were attached.
@@ -19764,11 +19766,11 @@ func (x *DescribeStreamNotifierResponse) GetCounter() int64 {
 	return 0
 }
 
-func (x *DescribeStreamNotifierResponse) GetPosition() []byte {
+func (x *DescribeStreamNotifierResponse) GetPosition() string {
 	if x != nil {
 		return x.Position
 	}
-	return nil
+	return ""
 }
 
 func (x *DescribeStreamNotifierResponse) GetClosed() bool {
@@ -22802,20 +22804,20 @@ const file_temporal_api_workflowservice_v1_request_response_proto_rawDesc = "" +
 	"\n" +
 	"request_id\x18\x03 \x01(\tR\trequestId\x12\x1a\n" +
 	"\bidentity\x18\x04 \x01(\tR\bidentity\"\x1e\n" +
-	"\x1cDetachStreamCallbackResponse\"\xe5\x03\n" +
+	"\x1cDetachStreamCallbackResponse\"\xc4\x03\n" +
 	"\x13NotifyStreamRequest\x12\x1c\n" +
 	"\tnamespace\x18\x01 \x01(\tR\tnamespace\x12F\n" +
 	"\n" +
 	"stream_ref\x18\x02 \x01(\v2'.temporal.api.stream.v1.StreamReferenceR\tstreamRef\x12\x1a\n" +
-	"\bposition\x18\x03 \x01(\fR\bposition\x12\x18\n" +
+	"\bposition\x18\x03 \x01(\tR\bposition\x12\x18\n" +
 	"\acounter\x18\x04 \x01(\x03R\acounter\x12^\n" +
 	"\bmetadata\x18\x05 \x03(\v2B.temporal.api.workflowservice.v1.NotifyStreamRequest.MetadataEntryR\bmetadata\x12\x14\n" +
 	"\x05close\x18\x06 \x01(\bR\x05close\x12B\n" +
 	"\fclose_result\x18\a \x01(\v2\x1f.temporal.api.common.v1.PayloadR\vcloseResult\x12\x1a\n" +
-	"\bidentity\x18\b \x01(\tR\bidentity\x1a\\\n" +
+	"\bidentity\x18\b \x01(\tR\bidentity\x1a;\n" +
 	"\rMetadataEntry\x12\x10\n" +
-	"\x03key\x18\x01 \x01(\tR\x03key\x125\n" +
-	"\x05value\x18\x02 \x01(\v2\x1f.temporal.api.common.v1.PayloadR\x05value:\x028\x01\"\x16\n" +
+	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
+	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"\x16\n" +
 	"\x14NotifyStreamResponse\"\x85\x01\n" +
 	"\x1dDescribeStreamNotifierRequest\x12\x1c\n" +
 	"\tnamespace\x18\x01 \x01(\tR\tnamespace\x12F\n" +
@@ -22823,7 +22825,7 @@ const file_temporal_api_workflowservice_v1_request_response_proto_rawDesc = "" +
 	"stream_ref\x18\x02 \x01(\v2'.temporal.api.stream.v1.StreamReferenceR\tstreamRef\"\xb8\x01\n" +
 	"\x1eDescribeStreamNotifierResponse\x12\x18\n" +
 	"\acounter\x18\x01 \x01(\x03R\acounter\x12\x1a\n" +
-	"\bposition\x18\x02 \x01(\fR\bposition\x12\x16\n" +
+	"\bposition\x18\x02 \x01(\tR\bposition\x12\x16\n" +
 	"\x06closed\x18\x03 \x01(\bR\x06closed\x12H\n" +
 	"\tcallbacks\x18\x04 \x03(\v2*.temporal.api.stream.v1.StreamCallbackInfoR\tcallbacksB\xbe\x01\n" +
 	"\"io.temporal.api.workflowservice.v1B\x14RequestResponseProtoP\x01Z5go.temporal.io/api/workflowservice/v1;workflowservice\xaa\x02!Temporalio.Api.WorkflowService.V1\xea\x02$Temporalio::Api::WorkflowService::V1b\x06proto3"
@@ -23759,12 +23761,11 @@ var file_temporal_api_workflowservice_v1_request_response_proto_depIdxs = []int3
 	449, // 462: temporal.api.workflowservice.v1.UpdateTaskQueueConfigRequest.RateLimitUpdate.rate_limit:type_name -> temporal.api.taskqueue.v1.RateLimit
 	427, // 463: temporal.api.workflowservice.v1.CountActivityExecutionsResponse.AggregationGroup.group_values:type_name -> temporal.api.common.v1.Payload
 	427, // 464: temporal.api.workflowservice.v1.CountNexusOperationExecutionsResponse.AggregationGroup.group_values:type_name -> temporal.api.common.v1.Payload
-	427, // 465: temporal.api.workflowservice.v1.NotifyStreamRequest.MetadataEntry.value:type_name -> temporal.api.common.v1.Payload
-	466, // [466:466] is the sub-list for method output_type
-	466, // [466:466] is the sub-list for method input_type
-	466, // [466:466] is the sub-list for extension type_name
-	466, // [466:466] is the sub-list for extension extendee
-	0,   // [0:466] is the sub-list for field type_name
+	465, // [465:465] is the sub-list for method output_type
+	465, // [465:465] is the sub-list for method input_type
+	465, // [465:465] is the sub-list for extension type_name
+	465, // [465:465] is the sub-list for extension extendee
+	0,   // [0:465] is the sub-list for field type_name
 }
 
 func init() { file_temporal_api_workflowservice_v1_request_response_proto_init() }

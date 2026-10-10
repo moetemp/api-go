@@ -2174,7 +2174,6 @@ func visitPayloads(
 				o.GetWorkflowPropertiesModifiedEventAttributes(),
 				o.GetWorkflowPropertiesModifiedExternallyEventAttributes(),
 				o.GetWorkflowTaskFailedEventAttributes(),
-				o.GetWorkflowTaskScheduledEventAttributes(),
 			); err != nil {
 				return err
 			}
@@ -2876,32 +2875,6 @@ func visitPayloads(
 
 			ctx.Context = prevCtx
 
-		case *history.WorkflowTaskScheduledEventAttributes:
-
-			if o == nil {
-				continue
-			}
-
-			prevCtx := ctx.Context
-			if options.ContextHook != nil {
-				var hookErr error
-				if ctx.Context, hookErr = options.ContextHook(prevCtx, o); hookErr != nil {
-					return hookErr
-				}
-			}
-
-			if err := visitPayloads(
-				ctx,
-				options,
-				o,
-				concState,
-				o.GetNexusOperationProgress(),
-			); err != nil {
-				return err
-			}
-
-			ctx.Context = prevCtx
-
 		case []*nexus.Endpoint:
 			for _, x := range o {
 				if err := visitPayloads(ctx, options, parent, concState, x); err != nil {
@@ -3039,39 +3012,6 @@ func visitPayloads(
 				o,
 				concState,
 				o.GetSearchAttributes(),
-			); err != nil {
-				return err
-			}
-
-			ctx.Context = prevCtx
-
-		case []*nexus.NexusOperationProgress:
-			for _, x := range o {
-				if err := visitPayloads(ctx, options, parent, concState, x); err != nil {
-					return err
-				}
-			}
-
-		case *nexus.NexusOperationProgress:
-
-			if o == nil {
-				continue
-			}
-
-			prevCtx := ctx.Context
-			if options.ContextHook != nil {
-				var hookErr error
-				if ctx.Context, hookErr = options.ContextHook(prevCtx, o); hookErr != nil {
-					return hookErr
-				}
-			}
-
-			if err := visitPayloads(
-				ctx,
-				options,
-				o,
-				concState,
-				o.GetMetadata(),
 			); err != nil {
 				return err
 			}
@@ -3292,16 +3232,6 @@ func visitPayloads(
 				if err := visitPayload(ctx, options, o, concState, &o.SourceContext); err != nil {
 					return err
 				}
-			}
-
-			if err := visitPayloads(
-				ctx,
-				options,
-				o,
-				concState,
-				o.GetProgress(),
-			); err != nil {
-				return err
 			}
 
 			ctx.Context = prevCtx
@@ -5125,16 +5055,6 @@ func visitPayloads(
 				if err := visitPayload(ctx, options, o, concState, &o.CloseResult); err != nil {
 					return err
 				}
-			}
-
-			if err := visitPayloads(
-				ctx,
-				options,
-				o,
-				concState,
-				o.GetMetadata(),
-			); err != nil {
-				return err
 			}
 
 			ctx.Context = prevCtx

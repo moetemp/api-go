@@ -352,14 +352,14 @@ type NexusOperationProgress struct {
 	//	*NexusOperationProgress_ScheduledEventId
 	Operation isNexusOperationProgress_Operation `protobuf_oneof:"operation"`
 	// Where the operation's output stands after the change this progress reports, in the
-	// handler's terms. Opaque to the server.
-	Position []byte `protobuf:"bytes,2,opt,name=position,proto3" json:"position,omitempty"`
+	// handler's terms, such as a stream cursor. Opaque to the server.
+	Position string `protobuf:"bytes,2,opt,name=position,proto3" json:"position,omitempty"`
 	// Orders the progress of one operation. Among progress folded together, the highest counter
 	// is kept. Must be positive.
 	Counter int64 `protobuf:"varint,3,opt,name=counter,proto3" json:"counter,omitempty"`
-	// Small details for the caller. The server rejects progress whose metadata exceeds 2 KiB in
-	// total (keys and encoded payloads).
-	Metadata      map[string]*v11.Payload `protobuf:"bytes,4,rep,name=metadata,proto3" json:"metadata,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
+	// Small details for the caller. The server rejects progress whose metadata keys and values
+	// exceed 2 KiB in total, counted as UTF-8 bytes.
+	Metadata      map[string]string `protobuf:"bytes,4,rep,name=metadata,proto3" json:"metadata,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -410,11 +410,11 @@ func (x *NexusOperationProgress) GetScheduledEventId() int64 {
 	return 0
 }
 
-func (x *NexusOperationProgress) GetPosition() []byte {
+func (x *NexusOperationProgress) GetPosition() string {
 	if x != nil {
 		return x.Position
 	}
-	return nil
+	return ""
 }
 
 func (x *NexusOperationProgress) GetCounter() int64 {
@@ -424,7 +424,7 @@ func (x *NexusOperationProgress) GetCounter() int64 {
 	return 0
 }
 
-func (x *NexusOperationProgress) GetMetadata() map[string]*v11.Payload {
+func (x *NexusOperationProgress) GetMetadata() map[string]string {
 	if x != nil {
 		return x.Metadata
 	}
@@ -2102,15 +2102,15 @@ const file_temporal_api_nexus_v1_message_proto_rawDesc = "" +
 	"\afailure\x18\x02 \x01(\v2\x1e.temporal.api.nexus.v1.FailureR\afailure\",\n" +
 	"\x04Link\x12\x10\n" +
 	"\x03url\x18\x01 \x01(\tR\x03url\x12\x12\n" +
-	"\x04type\x18\x02 \x01(\tR\x04type\"\xc2\x02\n" +
+	"\x04type\x18\x02 \x01(\tR\x04type\"\xa1\x02\n" +
 	"\x16NexusOperationProgress\x12.\n" +
 	"\x12scheduled_event_id\x18\x01 \x01(\x03H\x00R\x10scheduledEventId\x12\x1a\n" +
-	"\bposition\x18\x02 \x01(\fR\bposition\x12\x18\n" +
+	"\bposition\x18\x02 \x01(\tR\bposition\x12\x18\n" +
 	"\acounter\x18\x03 \x01(\x03R\acounter\x12W\n" +
-	"\bmetadata\x18\x04 \x03(\v2;.temporal.api.nexus.v1.NexusOperationProgress.MetadataEntryR\bmetadata\x1a\\\n" +
+	"\bmetadata\x18\x04 \x03(\v2;.temporal.api.nexus.v1.NexusOperationProgress.MetadataEntryR\bmetadata\x1a;\n" +
 	"\rMetadataEntry\x12\x10\n" +
-	"\x03key\x18\x01 \x01(\tR\x03key\x125\n" +
-	"\x05value\x18\x02 \x01(\v2\x1f.temporal.api.common.v1.PayloadR\x05value:\x028\x01B\v\n" +
+	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
+	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01B\v\n" +
 	"\toperation\"\xa6\x03\n" +
 	"\x15StartOperationRequest\x12\x18\n" +
 	"\aservice\x18\x01 \x01(\tR\aservice\x12\x1c\n" +
@@ -2354,15 +2354,14 @@ var file_temporal_api_nexus_v1_message_proto_depIdxs = []int32{
 	33, // 51: temporal.api.nexus.v1.NexusOperationExecutionListInfo.status:type_name -> temporal.api.enums.v1.NexusOperationExecutionStatus
 	36, // 52: temporal.api.nexus.v1.NexusOperationExecutionListInfo.search_attributes:type_name -> temporal.api.common.v1.SearchAttributes
 	35, // 53: temporal.api.nexus.v1.NexusOperationExecutionListInfo.execution_duration:type_name -> google.protobuf.Duration
-	29, // 54: temporal.api.nexus.v1.NexusOperationProgress.MetadataEntry.value:type_name -> temporal.api.common.v1.Payload
-	29, // 55: temporal.api.nexus.v1.StartOperationResponse.Sync.payload:type_name -> temporal.api.common.v1.Payload
-	4,  // 56: temporal.api.nexus.v1.StartOperationResponse.Sync.links:type_name -> temporal.api.nexus.v1.Link
-	4,  // 57: temporal.api.nexus.v1.StartOperationResponse.Async.links:type_name -> temporal.api.nexus.v1.Link
-	58, // [58:58] is the sub-list for method output_type
-	58, // [58:58] is the sub-list for method input_type
-	58, // [58:58] is the sub-list for extension type_name
-	58, // [58:58] is the sub-list for extension extendee
-	0,  // [0:58] is the sub-list for field type_name
+	29, // 54: temporal.api.nexus.v1.StartOperationResponse.Sync.payload:type_name -> temporal.api.common.v1.Payload
+	4,  // 55: temporal.api.nexus.v1.StartOperationResponse.Sync.links:type_name -> temporal.api.nexus.v1.Link
+	4,  // 56: temporal.api.nexus.v1.StartOperationResponse.Async.links:type_name -> temporal.api.nexus.v1.Link
+	57, // [57:57] is the sub-list for method output_type
+	57, // [57:57] is the sub-list for method input_type
+	57, // [57:57] is the sub-list for extension type_name
+	57, // [57:57] is the sub-list for extension extendee
+	0,  // [0:57] is the sub-list for field type_name
 }
 
 func init() { file_temporal_api_nexus_v1_message_proto_init() }
