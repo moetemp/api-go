@@ -4569,6 +4569,7 @@ func visitPayloads(
 				o,
 				concState,
 				o.GetCallbacks(),
+				o.GetCloseFailure(),
 			); err != nil {
 				return err
 			}
@@ -5055,6 +5056,16 @@ func visitPayloads(
 				if err := visitPayload(ctx, options, o, concState, &o.CloseResult); err != nil {
 					return err
 				}
+			}
+
+			if err := visitPayloads(
+				ctx,
+				options,
+				o,
+				concState,
+				o.GetCloseFailure(),
+			); err != nil {
+				return err
 			}
 
 			ctx.Context = prevCtx
@@ -7073,6 +7084,7 @@ func visitFailures(ctx *VisitFailuresContext, options *VisitFailuresOptions, obj
 				ctx,
 				options,
 				o.GetCallbacks(),
+				o.GetCloseFailure(),
 			); err != nil {
 				return err
 			}
@@ -7181,6 +7193,19 @@ func visitFailures(ctx *VisitFailuresContext, options *VisitFailuresOptions, obj
 				ctx,
 				options,
 				o.GetHistory(),
+			); err != nil {
+				return err
+			}
+
+		case *workflowservice.NotifyStreamRequest:
+			if o == nil {
+				continue
+			}
+			ctx.Parent = o
+			if err := visitFailures(
+				ctx,
+				options,
+				o.GetCloseFailure(),
 			); err != nil {
 				return err
 			}
