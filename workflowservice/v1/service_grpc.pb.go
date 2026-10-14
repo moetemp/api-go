@@ -148,6 +148,7 @@ const (
 	WorkflowService_NotifyStream_FullMethodName                                 = "/temporal.api.workflowservice.v1.WorkflowService/NotifyStream"
 	WorkflowService_DescribeStreamNotifier_FullMethodName                       = "/temporal.api.workflowservice.v1.WorkflowService/DescribeStreamNotifier"
 	WorkflowService_PollStreamNotifier_FullMethodName                           = "/temporal.api.workflowservice.v1.WorkflowService/PollStreamNotifier"
+	WorkflowService_ExecuteSyncNexusOperation_FullMethodName                    = "/temporal.api.workflowservice.v1.WorkflowService/ExecuteSyncNexusOperation"
 )
 
 // WorkflowServiceClient is the client API for WorkflowService service.
@@ -923,6 +924,19 @@ type WorkflowServiceClient interface {
 	//
 	//	aip.dev/not-precedent: SDKs reach the stream notifier through System Nexus or gRPC. --)
 	PollStreamNotifier(ctx context.Context, in *PollStreamNotifierRequest, opts ...grpc.CallOption) (*PollStreamNotifierResponse, error)
+	// ExecuteSyncNexusOperation runs one synchronous Nexus operation on an endpoint for a caller in
+	// `namespace`, and returns its result or its failure. The server persists nothing and does not
+	// retry. Authorization runs against the caller namespace, and the endpoint must be reachable
+	// from it. An operation that answers asynchronously is refused with `FailedPrecondition`. Use
+	// `StartNexusOperationExecution` for those.
+	//
+	// The server sets the Nexus header `temporal-caller-namespace` to the caller namespace, so the
+	// handler can trust it. A request that sets this header is refused.
+	//
+	// (-- api-linter: core::0127::http-annotation=disabled
+	//
+	//	aip.dev/not-precedent: SDKs call it through gRPC. --)
+	ExecuteSyncNexusOperation(ctx context.Context, in *ExecuteSyncNexusOperationRequest, opts ...grpc.CallOption) (*ExecuteSyncNexusOperationResponse, error)
 }
 
 type workflowServiceClient struct {
@@ -2213,6 +2227,16 @@ func (c *workflowServiceClient) PollStreamNotifier(ctx context.Context, in *Poll
 	return out, nil
 }
 
+func (c *workflowServiceClient) ExecuteSyncNexusOperation(ctx context.Context, in *ExecuteSyncNexusOperationRequest, opts ...grpc.CallOption) (*ExecuteSyncNexusOperationResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ExecuteSyncNexusOperationResponse)
+	err := c.cc.Invoke(ctx, WorkflowService_ExecuteSyncNexusOperation_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // WorkflowServiceServer is the server API for WorkflowService service.
 // All implementations must embed UnimplementedWorkflowServiceServer
 // for forward compatibility.
@@ -2986,6 +3010,19 @@ type WorkflowServiceServer interface {
 	//
 	//	aip.dev/not-precedent: SDKs reach the stream notifier through System Nexus or gRPC. --)
 	PollStreamNotifier(context.Context, *PollStreamNotifierRequest) (*PollStreamNotifierResponse, error)
+	// ExecuteSyncNexusOperation runs one synchronous Nexus operation on an endpoint for a caller in
+	// `namespace`, and returns its result or its failure. The server persists nothing and does not
+	// retry. Authorization runs against the caller namespace, and the endpoint must be reachable
+	// from it. An operation that answers asynchronously is refused with `FailedPrecondition`. Use
+	// `StartNexusOperationExecution` for those.
+	//
+	// The server sets the Nexus header `temporal-caller-namespace` to the caller namespace, so the
+	// handler can trust it. A request that sets this header is refused.
+	//
+	// (-- api-linter: core::0127::http-annotation=disabled
+	//
+	//	aip.dev/not-precedent: SDKs call it through gRPC. --)
+	ExecuteSyncNexusOperation(context.Context, *ExecuteSyncNexusOperationRequest) (*ExecuteSyncNexusOperationResponse, error)
 	mustEmbedUnimplementedWorkflowServiceServer()
 }
 
@@ -3379,6 +3416,9 @@ func (UnimplementedWorkflowServiceServer) DescribeStreamNotifier(context.Context
 }
 func (UnimplementedWorkflowServiceServer) PollStreamNotifier(context.Context, *PollStreamNotifierRequest) (*PollStreamNotifierResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method PollStreamNotifier not implemented")
+}
+func (UnimplementedWorkflowServiceServer) ExecuteSyncNexusOperation(context.Context, *ExecuteSyncNexusOperationRequest) (*ExecuteSyncNexusOperationResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ExecuteSyncNexusOperation not implemented")
 }
 func (UnimplementedWorkflowServiceServer) mustEmbedUnimplementedWorkflowServiceServer() {}
 func (UnimplementedWorkflowServiceServer) testEmbeddedByValue()                         {}
@@ -5705,6 +5745,24 @@ func _WorkflowService_PollStreamNotifier_Handler(srv interface{}, ctx context.Co
 	return interceptor(ctx, in, info, handler)
 }
 
+func _WorkflowService_ExecuteSyncNexusOperation_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ExecuteSyncNexusOperationRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(WorkflowServiceServer).ExecuteSyncNexusOperation(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: WorkflowService_ExecuteSyncNexusOperation_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(WorkflowServiceServer).ExecuteSyncNexusOperation(ctx, req.(*ExecuteSyncNexusOperationRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // WorkflowService_ServiceDesc is the grpc.ServiceDesc for WorkflowService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -6223,6 +6281,10 @@ var WorkflowService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "PollStreamNotifier",
 			Handler:    _WorkflowService_PollStreamNotifier_Handler,
+		},
+		{
+			MethodName: "ExecuteSyncNexusOperation",
+			Handler:    _WorkflowService_ExecuteSyncNexusOperation_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

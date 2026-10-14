@@ -696,6 +696,26 @@ func (mr *MockWorkflowServiceClientMockRecorder) ExecuteMultiOperation(ctx, in i
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ExecuteMultiOperation", reflect.TypeOf((*MockWorkflowServiceClient)(nil).ExecuteMultiOperation), varargs...)
 }
 
+// ExecuteSyncNexusOperation mocks base method.
+func (m *MockWorkflowServiceClient) ExecuteSyncNexusOperation(ctx context.Context, in *workflowservice.ExecuteSyncNexusOperationRequest, opts ...grpc.CallOption) (*workflowservice.ExecuteSyncNexusOperationResponse, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx, in}
+	for _, a := range opts {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "ExecuteSyncNexusOperation", varargs...)
+	ret0, _ := ret[0].(*workflowservice.ExecuteSyncNexusOperationResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ExecuteSyncNexusOperation indicates an expected call of ExecuteSyncNexusOperation.
+func (mr *MockWorkflowServiceClientMockRecorder) ExecuteSyncNexusOperation(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx, in}, opts...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ExecuteSyncNexusOperation", reflect.TypeOf((*MockWorkflowServiceClient)(nil).ExecuteSyncNexusOperation), varargs...)
+}
+
 // FetchWorkerConfig mocks base method.
 func (m *MockWorkflowServiceClient) FetchWorkerConfig(ctx context.Context, in *workflowservice.FetchWorkerConfigRequest, opts ...grpc.CallOption) (*workflowservice.FetchWorkerConfigResponse, error) {
 	m.ctrl.T.Helper()
@@ -3115,6 +3135,21 @@ func (m *MockWorkflowServiceServer) ExecuteMultiOperation(arg0 context.Context, 
 func (mr *MockWorkflowServiceServerMockRecorder) ExecuteMultiOperation(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ExecuteMultiOperation", reflect.TypeOf((*MockWorkflowServiceServer)(nil).ExecuteMultiOperation), arg0, arg1)
+}
+
+// ExecuteSyncNexusOperation mocks base method.
+func (m *MockWorkflowServiceServer) ExecuteSyncNexusOperation(arg0 context.Context, arg1 *workflowservice.ExecuteSyncNexusOperationRequest) (*workflowservice.ExecuteSyncNexusOperationResponse, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "ExecuteSyncNexusOperation", arg0, arg1)
+	ret0, _ := ret[0].(*workflowservice.ExecuteSyncNexusOperationResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// ExecuteSyncNexusOperation indicates an expected call of ExecuteSyncNexusOperation.
+func (mr *MockWorkflowServiceServerMockRecorder) ExecuteSyncNexusOperation(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ExecuteSyncNexusOperation", reflect.TypeOf((*MockWorkflowServiceServer)(nil).ExecuteSyncNexusOperation), arg0, arg1)
 }
 
 // FetchWorkerConfig mocks base method.

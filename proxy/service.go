@@ -164,6 +164,10 @@ func (s *workflowServiceProxyServer) ExecuteMultiOperation(ctx context.Context, 
 	return s.client.ExecuteMultiOperation(s.reqCtx(ctx), in0)
 }
 
+func (s *workflowServiceProxyServer) ExecuteSyncNexusOperation(ctx context.Context, in0 *workflowservice.ExecuteSyncNexusOperationRequest) (*workflowservice.ExecuteSyncNexusOperationResponse, error) {
+	return s.client.ExecuteSyncNexusOperation(s.reqCtx(ctx), in0)
+}
+
 func (s *workflowServiceProxyServer) FetchWorkerConfig(ctx context.Context, in0 *workflowservice.FetchWorkerConfigRequest) (*workflowservice.FetchWorkerConfigResponse, error) {
 	return s.client.FetchWorkerConfig(s.reqCtx(ctx), in0)
 }
