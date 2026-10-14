@@ -2088,6 +2088,13 @@ func (x *Callback_Internal) GetData() []byte {
 // - Input:  temporal.api.notificationservice.v1.OnCompleteRequest
 // - Output: temporal.api.notificationservice.v1.OnCompleteResponse
 //
+// When `progress_operation` is set, the server also invokes that operation of the same service for
+// the source operation's progress. That operation must have the following:
+// - Input:  temporal.api.notificationservice.v1.OnProgressRequest
+// - Output: temporal.api.notificationservice.v1.OnProgressResponse
+// It may be invoked any number of times before, during or after the single completion. It must
+// complete synchronously.
+//
 // The targeted Nexus service must be registered within the same namespace as the source operation
 // the callback is attached to. (While Nexus allows for cross-namespace operations, NexusHandler callbacks
 // are strictly caller-side.)
@@ -2112,8 +2119,11 @@ type Callback_NexusHandler struct {
 	// total sum of all source context payloads attached to an execution. See dynamic configuration:
 	// "callback.nexusHandler.sourceContext.maxSize", "callback.nexusHandler.sourceContext.aggregateMaxSize".
 	SourceContext *Payload `protobuf:"bytes,4,opt,name=source_context,json=sourceContext,proto3" json:"source_context,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	// Target operation for progress of the source operation, e.g. "OnProgress". Empty means the
+	// callback takes the completion only.
+	ProgressOperation string `protobuf:"bytes,5,opt,name=progress_operation,json=progressOperation,proto3" json:"progress_operation,omitempty"`
+	unknownFields     protoimpl.UnknownFields
+	sizeCache         protoimpl.SizeCache
 }
 
 func (x *Callback_NexusHandler) Reset() {
@@ -2172,6 +2182,13 @@ func (x *Callback_NexusHandler) GetSourceContext() *Payload {
 		return x.SourceContext
 	}
 	return nil
+}
+
+func (x *Callback_NexusHandler) GetProgressOperation() string {
+	if x != nil {
+		return x.ProgressOperation
+	}
+	return ""
 }
 
 type Link_WorkflowEvent struct {
@@ -2775,7 +2792,7 @@ const file_temporal_api_common_v1_message_proto_rawDesc = "" +
 	" \x01(\x0e2'.temporal.api.enums.v1.ResetReapplyTypeB\x02\x18\x01R\x10resetReapplyType\x12(\n" +
 	"\x10current_run_only\x18\v \x01(\bR\x0ecurrentRunOnly\x12m\n" +
 	"\x1breset_reapply_exclude_types\x18\f \x03(\x0e2..temporal.api.enums.v1.ResetReapplyExcludeTypeR\x18resetReapplyExcludeTypesB\b\n" +
-	"\x06target\"\xaa\x05\n" +
+	"\x06target\"\xd9\x05\n" +
 	"\bCallback\x12>\n" +
 	"\x05nexus\x18\x02 \x01(\v2&.temporal.api.common.v1.Callback.NexusH\x00R\x05nexus\x12G\n" +
 	"\binternal\x18\x03 \x01(\v2).temporal.api.common.v1.Callback.InternalH\x00R\binternal\x12T\n" +
@@ -2788,12 +2805,13 @@ const file_temporal_api_common_v1_message_proto_rawDesc = "" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
 	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\x1a\x1e\n" +
 	"\bInternal\x12\x12\n" +
-	"\x04data\x18\x01 \x01(\fR\x04data\x1a\xb6\x01\n" +
+	"\x04data\x18\x01 \x01(\fR\x04data\x1a\xe5\x01\n" +
 	"\fNexusHandler\x12&\n" +
 	"\x0ftask_queue_name\x18\x01 \x01(\tR\rtaskQueueName\x12\x18\n" +
 	"\aservice\x18\x02 \x01(\tR\aservice\x12\x1c\n" +
 	"\toperation\x18\x03 \x01(\tR\toperation\x12F\n" +
-	"\x0esource_context\x18\x04 \x01(\v2\x1f.temporal.api.common.v1.PayloadR\rsourceContextB\t\n" +
+	"\x0esource_context\x18\x04 \x01(\v2\x1f.temporal.api.common.v1.PayloadR\rsourceContext\x12-\n" +
+	"\x12progress_operation\x18\x05 \x01(\tR\x11progressOperationB\t\n" +
 	"\avariantJ\x04\b\x01\x10\x02\"\x88\f\n" +
 	"\x04Link\x12S\n" +
 	"\x0eworkflow_event\x18\x01 \x01(\v2*.temporal.api.common.v1.Link.WorkflowEventH\x00R\rworkflowEvent\x12D\n" +
