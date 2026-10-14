@@ -3241,6 +3241,28 @@ func visitPayloads(
 
 			ctx.Context = prevCtx
 
+		case *notificationservice.OnProgressRequest:
+
+			if o == nil {
+				continue
+			}
+
+			prevCtx := ctx.Context
+			if options.ContextHook != nil {
+				var hookErr error
+				if ctx.Context, hookErr = options.ContextHook(prevCtx, o); hookErr != nil {
+					return hookErr
+				}
+			}
+
+			if o.SourceContext != nil {
+				if err := visitPayload(ctx, options, o, concState, &o.SourceContext); err != nil {
+					return err
+				}
+			}
+
+			ctx.Context = prevCtx
+
 		case *operatorservice.CreateNexusEndpointRequest:
 
 			if o == nil {

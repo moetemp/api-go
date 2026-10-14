@@ -10,7 +10,13 @@ import (
 var TemporalAPIWorkflowserviceV1WorkflowService = struct {
 	ServiceName                      string
 	SignalWithStartWorkflowExecution nexus.OperationReference[workflowservicev1.SignalWithStartWorkflowExecutionRequest, workflowservicev1.SignalWithStartWorkflowExecutionResponse]
+	AttachStreamCallback             nexus.OperationReference[workflowservicev1.AttachStreamCallbackRequest, workflowservicev1.AttachStreamCallbackResponse]
+	DetachStreamCallback             nexus.OperationReference[workflowservicev1.DetachStreamCallbackRequest, workflowservicev1.DetachStreamCallbackResponse]
+	NotifyStream                     nexus.OperationReference[workflowservicev1.NotifyStreamRequest, workflowservicev1.NotifyStreamResponse]
 }{
 	ServiceName:                      "temporal.api.workflowservice.v1.WorkflowService",
 	SignalWithStartWorkflowExecution: nexus.NewOperationReference[workflowservicev1.SignalWithStartWorkflowExecutionRequest, workflowservicev1.SignalWithStartWorkflowExecutionResponse]("SignalWithStartWorkflowExecution"),
+	AttachStreamCallback:             nexus.NewOperationReference[workflowservicev1.AttachStreamCallbackRequest, workflowservicev1.AttachStreamCallbackResponse]("AttachStreamCallback"),
+	DetachStreamCallback:             nexus.NewOperationReference[workflowservicev1.DetachStreamCallbackRequest, workflowservicev1.DetachStreamCallbackResponse]("DetachStreamCallback"),
+	NotifyStream:                     nexus.NewOperationReference[workflowservicev1.NotifyStreamRequest, workflowservicev1.NotifyStreamResponse]("NotifyStream"),
 }

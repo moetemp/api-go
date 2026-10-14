@@ -888,7 +888,7 @@ type WorkflowServiceClient interface {
 	//
 	// (-- api-linter: core::0127::http-annotation=disabled
 	//
-	//	aip.dev/not-precedent: SDKs reach the stream notifier through gRPC. --)
+	//	aip.dev/not-precedent: SDKs reach the stream notifier through System Nexus or gRPC. --)
 	AttachStreamCallback(ctx context.Context, in *AttachStreamCallbackRequest, opts ...grpc.CallOption) (*AttachStreamCallbackResponse, error)
 	// DetachStreamCallback removes a callback from the notifier of a stream. The notifier completes
 	// the callback's operation as canceled and sends it no more progress. A Nexus handler calls it
@@ -896,7 +896,7 @@ type WorkflowServiceClient interface {
 	//
 	// (-- api-linter: core::0127::http-annotation=disabled
 	//
-	//	aip.dev/not-precedent: SDKs reach the stream notifier through gRPC. --)
+	//	aip.dev/not-precedent: SDKs reach the stream notifier through System Nexus or gRPC. --)
 	DetachStreamCallback(ctx context.Context, in *DetachStreamCallbackRequest, opts ...grpc.CallOption) (*DetachStreamCallbackResponse, error)
 	// NotifyStream tells the notifier of a stream that the stream moved, or that it closed. The
 	// notifier passes the latest notification on to every attached callback as progress, and on close
@@ -904,23 +904,24 @@ type WorkflowServiceClient interface {
 	//
 	// (-- api-linter: core::0127::http-annotation=disabled
 	//
-	//	aip.dev/not-precedent: SDKs reach the stream notifier through gRPC. --)
+	//	aip.dev/not-precedent: SDKs reach the stream notifier through System Nexus or gRPC. --)
 	NotifyStream(ctx context.Context, in *NotifyStreamRequest, opts ...grpc.CallOption) (*NotifyStreamResponse, error)
 	// DescribeStreamNotifier returns the state of the notifier of a stream and its callbacks. It is
-	// for operators and tools.
+	// for operators and tools, so it is not exposed through System Nexus.
 	//
 	// (-- api-linter: core::0127::http-annotation=disabled
 	//
-	//	aip.dev/not-precedent: SDKs reach the stream notifier through gRPC. --)
+	//	aip.dev/not-precedent: SDKs reach the stream notifier through System Nexus or gRPC. --)
 	DescribeStreamNotifier(ctx context.Context, in *DescribeStreamNotifierRequest, opts ...grpc.CallOption) (*DescribeStreamNotifierResponse, error)
 	// PollStreamNotifier waits until the notifier of a stream has a counter above `after_counter`,
 	// or the stream is closed. It returns with no change after a wait limit set by the server
 	// (`streamnotifier.pollMaxWait`). A client that reads a stream calls it after a read that
-	// found nothing and armed the topic, in place of another blocking read on the store.
+	// found nothing and armed the topic, in place of another blocking read on the store. It is a
+	// long poll, so it is not exposed through System Nexus.
 	//
 	// (-- api-linter: core::0127::http-annotation=disabled
 	//
-	//	aip.dev/not-precedent: SDKs reach the stream notifier through gRPC. --)
+	//	aip.dev/not-precedent: SDKs reach the stream notifier through System Nexus or gRPC. --)
 	PollStreamNotifier(ctx context.Context, in *PollStreamNotifierRequest, opts ...grpc.CallOption) (*PollStreamNotifierResponse, error)
 }
 
@@ -2950,7 +2951,7 @@ type WorkflowServiceServer interface {
 	//
 	// (-- api-linter: core::0127::http-annotation=disabled
 	//
-	//	aip.dev/not-precedent: SDKs reach the stream notifier through gRPC. --)
+	//	aip.dev/not-precedent: SDKs reach the stream notifier through System Nexus or gRPC. --)
 	AttachStreamCallback(context.Context, *AttachStreamCallbackRequest) (*AttachStreamCallbackResponse, error)
 	// DetachStreamCallback removes a callback from the notifier of a stream. The notifier completes
 	// the callback's operation as canceled and sends it no more progress. A Nexus handler calls it
@@ -2958,7 +2959,7 @@ type WorkflowServiceServer interface {
 	//
 	// (-- api-linter: core::0127::http-annotation=disabled
 	//
-	//	aip.dev/not-precedent: SDKs reach the stream notifier through gRPC. --)
+	//	aip.dev/not-precedent: SDKs reach the stream notifier through System Nexus or gRPC. --)
 	DetachStreamCallback(context.Context, *DetachStreamCallbackRequest) (*DetachStreamCallbackResponse, error)
 	// NotifyStream tells the notifier of a stream that the stream moved, or that it closed. The
 	// notifier passes the latest notification on to every attached callback as progress, and on close
@@ -2966,23 +2967,24 @@ type WorkflowServiceServer interface {
 	//
 	// (-- api-linter: core::0127::http-annotation=disabled
 	//
-	//	aip.dev/not-precedent: SDKs reach the stream notifier through gRPC. --)
+	//	aip.dev/not-precedent: SDKs reach the stream notifier through System Nexus or gRPC. --)
 	NotifyStream(context.Context, *NotifyStreamRequest) (*NotifyStreamResponse, error)
 	// DescribeStreamNotifier returns the state of the notifier of a stream and its callbacks. It is
-	// for operators and tools.
+	// for operators and tools, so it is not exposed through System Nexus.
 	//
 	// (-- api-linter: core::0127::http-annotation=disabled
 	//
-	//	aip.dev/not-precedent: SDKs reach the stream notifier through gRPC. --)
+	//	aip.dev/not-precedent: SDKs reach the stream notifier through System Nexus or gRPC. --)
 	DescribeStreamNotifier(context.Context, *DescribeStreamNotifierRequest) (*DescribeStreamNotifierResponse, error)
 	// PollStreamNotifier waits until the notifier of a stream has a counter above `after_counter`,
 	// or the stream is closed. It returns with no change after a wait limit set by the server
 	// (`streamnotifier.pollMaxWait`). A client that reads a stream calls it after a read that
-	// found nothing and armed the topic, in place of another blocking read on the store.
+	// found nothing and armed the topic, in place of another blocking read on the store. It is a
+	// long poll, so it is not exposed through System Nexus.
 	//
 	// (-- api-linter: core::0127::http-annotation=disabled
 	//
-	//	aip.dev/not-precedent: SDKs reach the stream notifier through gRPC. --)
+	//	aip.dev/not-precedent: SDKs reach the stream notifier through System Nexus or gRPC. --)
 	PollStreamNotifier(context.Context, *PollStreamNotifierRequest) (*PollStreamNotifierResponse, error)
 	mustEmbedUnimplementedWorkflowServiceServer()
 }
