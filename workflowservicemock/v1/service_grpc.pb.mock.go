@@ -1256,6 +1256,26 @@ func (mr *MockWorkflowServiceClientMockRecorder) NotifyStream(ctx, in interface{
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "NotifyStream", reflect.TypeOf((*MockWorkflowServiceClient)(nil).NotifyStream), varargs...)
 }
 
+// NotifyStreams mocks base method.
+func (m *MockWorkflowServiceClient) NotifyStreams(ctx context.Context, in *workflowservice.NotifyStreamsRequest, opts ...grpc.CallOption) (*workflowservice.NotifyStreamsResponse, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx, in}
+	for _, a := range opts {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "NotifyStreams", varargs...)
+	ret0, _ := ret[0].(*workflowservice.NotifyStreamsResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// NotifyStreams indicates an expected call of NotifyStreams.
+func (mr *MockWorkflowServiceClientMockRecorder) NotifyStreams(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx, in}, opts...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "NotifyStreams", reflect.TypeOf((*MockWorkflowServiceClient)(nil).NotifyStreams), varargs...)
+}
+
 // PatchSchedule mocks base method.
 func (m *MockWorkflowServiceClient) PatchSchedule(ctx context.Context, in *workflowservice.PatchScheduleRequest, opts ...grpc.CallOption) (*workflowservice.PatchScheduleResponse, error) {
 	m.ctrl.T.Helper()
@@ -3555,6 +3575,21 @@ func (m *MockWorkflowServiceServer) NotifyStream(arg0 context.Context, arg1 *wor
 func (mr *MockWorkflowServiceServerMockRecorder) NotifyStream(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "NotifyStream", reflect.TypeOf((*MockWorkflowServiceServer)(nil).NotifyStream), arg0, arg1)
+}
+
+// NotifyStreams mocks base method.
+func (m *MockWorkflowServiceServer) NotifyStreams(arg0 context.Context, arg1 *workflowservice.NotifyStreamsRequest) (*workflowservice.NotifyStreamsResponse, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "NotifyStreams", arg0, arg1)
+	ret0, _ := ret[0].(*workflowservice.NotifyStreamsResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// NotifyStreams indicates an expected call of NotifyStreams.
+func (mr *MockWorkflowServiceServerMockRecorder) NotifyStreams(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "NotifyStreams", reflect.TypeOf((*MockWorkflowServiceServer)(nil).NotifyStreams), arg0, arg1)
 }
 
 // PatchSchedule mocks base method.
