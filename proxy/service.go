@@ -272,6 +272,10 @@ func (s *workflowServiceProxyServer) NotifyStream(ctx context.Context, in0 *work
 	return s.client.NotifyStream(s.reqCtx(ctx), in0)
 }
 
+func (s *workflowServiceProxyServer) NotifyStreams(ctx context.Context, in0 *workflowservice.NotifyStreamsRequest) (*workflowservice.NotifyStreamsResponse, error) {
+	return s.client.NotifyStreams(s.reqCtx(ctx), in0)
+}
+
 func (s *workflowServiceProxyServer) PatchSchedule(ctx context.Context, in0 *workflowservice.PatchScheduleRequest) (*workflowservice.PatchScheduleResponse, error) {
 	return s.client.PatchSchedule(s.reqCtx(ctx), in0)
 }
