@@ -295,7 +295,7 @@ type StreamWake struct {
 	SubscriptionId string `protobuf:"bytes,1,opt,name=subscription_id,json=subscriptionId,proto3" json:"subscription_id,omitempty"`
 	// The position that came with `counter`, in the producer's terms.
 	Position string `protobuf:"bytes,2,opt,name=position,proto3" json:"position,omitempty"`
-	// The highest counter the notifier has seen. A reader that armed its read at a counter wakes
+	// The highest counter the notifier has seen. A reader that subscribed after a counter wakes
 	// when this value is above it. Zero when the notifier has seen no notification.
 	Counter int64 `protobuf:"varint,3,opt,name=counter,proto3" json:"counter,omitempty"`
 	// The metadata that came with `counter`.
@@ -410,6 +410,80 @@ func (x *StreamWake) GetResubscribe() bool {
 	return false
 }
 
+// One stream's entry in a NotifyStreams request: the same fields as a NotifyStream request that
+// does not close the stream.
+type StreamNotification struct {
+	state     protoimpl.MessageState `protogen:"open.v1"`
+	StreamRef *StreamReference       `protobuf:"bytes,1,opt,name=stream_ref,json=streamRef,proto3" json:"stream_ref,omitempty"`
+	// Where the stream stands, in the producer's terms. At most 1 KiB of UTF-8.
+	Position string `protobuf:"bytes,2,opt,name=position,proto3" json:"position,omitempty"`
+	// The newest counter of the stream. Must be positive. The notifier ignores a counter at or
+	// below the one it holds.
+	Counter int64 `protobuf:"varint,3,opt,name=counter,proto3" json:"counter,omitempty"`
+	// Small details passed on to the callbacks. At most 2 KiB in total, counted as UTF-8 bytes.
+	Metadata      map[string]string `protobuf:"bytes,4,rep,name=metadata,proto3" json:"metadata,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *StreamNotification) Reset() {
+	*x = StreamNotification{}
+	mi := &file_temporal_api_stream_v1_message_proto_msgTypes[4]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *StreamNotification) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*StreamNotification) ProtoMessage() {}
+
+func (x *StreamNotification) ProtoReflect() protoreflect.Message {
+	mi := &file_temporal_api_stream_v1_message_proto_msgTypes[4]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use StreamNotification.ProtoReflect.Descriptor instead.
+func (*StreamNotification) Descriptor() ([]byte, []int) {
+	return file_temporal_api_stream_v1_message_proto_rawDescGZIP(), []int{4}
+}
+
+func (x *StreamNotification) GetStreamRef() *StreamReference {
+	if x != nil {
+		return x.StreamRef
+	}
+	return nil
+}
+
+func (x *StreamNotification) GetPosition() string {
+	if x != nil {
+		return x.Position
+	}
+	return ""
+}
+
+func (x *StreamNotification) GetCounter() int64 {
+	if x != nil {
+		return x.Counter
+	}
+	return 0
+}
+
+func (x *StreamNotification) GetMetadata() map[string]string {
+	if x != nil {
+		return x.Metadata
+	}
+	return nil
+}
+
 var File_temporal_api_stream_v1_message_proto protoreflect.FileDescriptor
 
 const file_temporal_api_stream_v1_message_proto_rawDesc = "" +
@@ -451,6 +525,15 @@ const file_temporal_api_stream_v1_message_proto_rawDesc = "" +
 	"\vresubscribe\x18\t \x01(\bR\vresubscribe\x1a;\n" +
 	"\rMetadataEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
+	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"\xa5\x02\n" +
+	"\x12StreamNotification\x12F\n" +
+	"\n" +
+	"stream_ref\x18\x01 \x01(\v2'.temporal.api.stream.v1.StreamReferenceR\tstreamRef\x12\x1a\n" +
+	"\bposition\x18\x02 \x01(\tR\bposition\x12\x18\n" +
+	"\acounter\x18\x03 \x01(\x03R\acounter\x12T\n" +
+	"\bmetadata\x18\x04 \x03(\v28.temporal.api.stream.v1.StreamNotification.MetadataEntryR\bmetadata\x1a;\n" +
+	"\rMetadataEntry\x12\x10\n" +
+	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
 	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01B\x89\x01\n" +
 	"\x19io.temporal.api.stream.v1B\fMessageProtoP\x01Z#go.temporal.io/api/stream/v1;stream\xaa\x02\x18Temporalio.Api.Stream.V1\xea\x02\x1bTemporalio::Api::Stream::V1b\x06proto3"
 
@@ -466,35 +549,39 @@ func file_temporal_api_stream_v1_message_proto_rawDescGZIP() []byte {
 	return file_temporal_api_stream_v1_message_proto_rawDescData
 }
 
-var file_temporal_api_stream_v1_message_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
+var file_temporal_api_stream_v1_message_proto_msgTypes = make([]protoimpl.MessageInfo, 7)
 var file_temporal_api_stream_v1_message_proto_goTypes = []any{
 	(*StreamReference)(nil),       // 0: temporal.api.stream.v1.StreamReference
 	(*StreamCallbackInfo)(nil),    // 1: temporal.api.stream.v1.StreamCallbackInfo
 	(*WorkflowWakeTarget)(nil),    // 2: temporal.api.stream.v1.WorkflowWakeTarget
 	(*StreamWake)(nil),            // 3: temporal.api.stream.v1.StreamWake
-	nil,                           // 4: temporal.api.stream.v1.StreamWake.MetadataEntry
-	(v1.StreamOwnerKind)(0),       // 5: temporal.api.enums.v1.StreamOwnerKind
-	(*v11.Callback)(nil),          // 6: temporal.api.common.v1.Callback
-	(v1.CallbackState)(0),         // 7: temporal.api.enums.v1.CallbackState
-	(*timestamppb.Timestamp)(nil), // 8: google.protobuf.Timestamp
-	(*v12.Failure)(nil),           // 9: temporal.api.failure.v1.Failure
-	(*v11.Payload)(nil),           // 10: temporal.api.common.v1.Payload
+	(*StreamNotification)(nil),    // 4: temporal.api.stream.v1.StreamNotification
+	nil,                           // 5: temporal.api.stream.v1.StreamWake.MetadataEntry
+	nil,                           // 6: temporal.api.stream.v1.StreamNotification.MetadataEntry
+	(v1.StreamOwnerKind)(0),       // 7: temporal.api.enums.v1.StreamOwnerKind
+	(*v11.Callback)(nil),          // 8: temporal.api.common.v1.Callback
+	(v1.CallbackState)(0),         // 9: temporal.api.enums.v1.CallbackState
+	(*timestamppb.Timestamp)(nil), // 10: google.protobuf.Timestamp
+	(*v12.Failure)(nil),           // 11: temporal.api.failure.v1.Failure
+	(*v11.Payload)(nil),           // 12: temporal.api.common.v1.Payload
 }
 var file_temporal_api_stream_v1_message_proto_depIdxs = []int32{
-	5,  // 0: temporal.api.stream.v1.StreamReference.owner_kind:type_name -> temporal.api.enums.v1.StreamOwnerKind
-	6,  // 1: temporal.api.stream.v1.StreamCallbackInfo.callback:type_name -> temporal.api.common.v1.Callback
-	7,  // 2: temporal.api.stream.v1.StreamCallbackInfo.state:type_name -> temporal.api.enums.v1.CallbackState
-	8,  // 3: temporal.api.stream.v1.StreamCallbackInfo.last_attempt_complete_time:type_name -> google.protobuf.Timestamp
-	9,  // 4: temporal.api.stream.v1.StreamCallbackInfo.last_attempt_failure:type_name -> temporal.api.failure.v1.Failure
+	7,  // 0: temporal.api.stream.v1.StreamReference.owner_kind:type_name -> temporal.api.enums.v1.StreamOwnerKind
+	8,  // 1: temporal.api.stream.v1.StreamCallbackInfo.callback:type_name -> temporal.api.common.v1.Callback
+	9,  // 2: temporal.api.stream.v1.StreamCallbackInfo.state:type_name -> temporal.api.enums.v1.CallbackState
+	10, // 3: temporal.api.stream.v1.StreamCallbackInfo.last_attempt_complete_time:type_name -> google.protobuf.Timestamp
+	11, // 4: temporal.api.stream.v1.StreamCallbackInfo.last_attempt_failure:type_name -> temporal.api.failure.v1.Failure
 	2,  // 5: temporal.api.stream.v1.StreamCallbackInfo.workflow_target:type_name -> temporal.api.stream.v1.WorkflowWakeTarget
-	4,  // 6: temporal.api.stream.v1.StreamWake.metadata:type_name -> temporal.api.stream.v1.StreamWake.MetadataEntry
-	10, // 7: temporal.api.stream.v1.StreamWake.close_result:type_name -> temporal.api.common.v1.Payload
-	9,  // 8: temporal.api.stream.v1.StreamWake.close_failure:type_name -> temporal.api.failure.v1.Failure
-	9,  // [9:9] is the sub-list for method output_type
-	9,  // [9:9] is the sub-list for method input_type
-	9,  // [9:9] is the sub-list for extension type_name
-	9,  // [9:9] is the sub-list for extension extendee
-	0,  // [0:9] is the sub-list for field type_name
+	5,  // 6: temporal.api.stream.v1.StreamWake.metadata:type_name -> temporal.api.stream.v1.StreamWake.MetadataEntry
+	12, // 7: temporal.api.stream.v1.StreamWake.close_result:type_name -> temporal.api.common.v1.Payload
+	11, // 8: temporal.api.stream.v1.StreamWake.close_failure:type_name -> temporal.api.failure.v1.Failure
+	0,  // 9: temporal.api.stream.v1.StreamNotification.stream_ref:type_name -> temporal.api.stream.v1.StreamReference
+	6,  // 10: temporal.api.stream.v1.StreamNotification.metadata:type_name -> temporal.api.stream.v1.StreamNotification.MetadataEntry
+	11, // [11:11] is the sub-list for method output_type
+	11, // [11:11] is the sub-list for method input_type
+	11, // [11:11] is the sub-list for extension type_name
+	11, // [11:11] is the sub-list for extension extendee
+	0,  // [0:11] is the sub-list for field type_name
 }
 
 func init() { file_temporal_api_stream_v1_message_proto_init() }
@@ -508,7 +595,7 @@ func file_temporal_api_stream_v1_message_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_temporal_api_stream_v1_message_proto_rawDesc), len(file_temporal_api_stream_v1_message_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   5,
+			NumMessages:   7,
 			NumExtensions: 0,
 			NumServices:   0,
 		},
