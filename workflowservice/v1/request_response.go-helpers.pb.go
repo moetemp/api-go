@@ -9106,3 +9106,373 @@ func (this *PollWorkflowExecutionTimeSkippingResponse) Equal(that interface{}) b
 
 	return proto.Equal(this, that1)
 }
+
+// Marshal an object of type AttachStreamCallbackRequest to the protobuf v3 wire format
+func (val *AttachStreamCallbackRequest) Marshal() ([]byte, error) {
+	return proto.Marshal(val)
+}
+
+// Unmarshal an object of type AttachStreamCallbackRequest from the protobuf v3 wire format
+func (val *AttachStreamCallbackRequest) Unmarshal(buf []byte) error {
+	return proto.Unmarshal(buf, val)
+}
+
+// Size returns the size of the object, in bytes, once serialized
+func (val *AttachStreamCallbackRequest) Size() int {
+	return proto.Size(val)
+}
+
+// Equal returns whether two AttachStreamCallbackRequest values are equivalent by recursively
+// comparing the message's fields.
+// For more information see the documentation for
+// https://pkg.go.dev/google.golang.org/protobuf/proto#Equal
+func (this *AttachStreamCallbackRequest) Equal(that interface{}) bool {
+	if that == nil {
+		return this == nil
+	}
+
+	var that1 *AttachStreamCallbackRequest
+	switch t := that.(type) {
+	case *AttachStreamCallbackRequest:
+		that1 = t
+	case AttachStreamCallbackRequest:
+		that1 = &t
+	default:
+		return false
+	}
+
+	return proto.Equal(this, that1)
+}
+
+// Marshal an object of type AttachStreamCallbackResponse to the protobuf v3 wire format
+func (val *AttachStreamCallbackResponse) Marshal() ([]byte, error) {
+	return proto.Marshal(val)
+}
+
+// Unmarshal an object of type AttachStreamCallbackResponse from the protobuf v3 wire format
+func (val *AttachStreamCallbackResponse) Unmarshal(buf []byte) error {
+	return proto.Unmarshal(buf, val)
+}
+
+// Size returns the size of the object, in bytes, once serialized
+func (val *AttachStreamCallbackResponse) Size() int {
+	return proto.Size(val)
+}
+
+// Equal returns whether two AttachStreamCallbackResponse values are equivalent by recursively
+// comparing the message's fields.
+// For more information see the documentation for
+// https://pkg.go.dev/google.golang.org/protobuf/proto#Equal
+func (this *AttachStreamCallbackResponse) Equal(that interface{}) bool {
+	if that == nil {
+		return this == nil
+	}
+
+	var that1 *AttachStreamCallbackResponse
+	switch t := that.(type) {
+	case *AttachStreamCallbackResponse:
+		that1 = t
+	case AttachStreamCallbackResponse:
+		that1 = &t
+	default:
+		return false
+	}
+
+	return proto.Equal(this, that1)
+}
+
+// Marshal an object of type DetachStreamCallbackRequest to the protobuf v3 wire format
+func (val *DetachStreamCallbackRequest) Marshal() ([]byte, error) {
+	return proto.Marshal(val)
+}
+
+// Unmarshal an object of type DetachStreamCallbackRequest from the protobuf v3 wire format
+func (val *DetachStreamCallbackRequest) Unmarshal(buf []byte) error {
+	return proto.Unmarshal(buf, val)
+}
+
+// Size returns the size of the object, in bytes, once serialized
+func (val *DetachStreamCallbackRequest) Size() int {
+	return proto.Size(val)
+}
+
+// Equal returns whether two DetachStreamCallbackRequest values are equivalent by recursively
+// comparing the message's fields.
+// For more information see the documentation for
+// https://pkg.go.dev/google.golang.org/protobuf/proto#Equal
+func (this *DetachStreamCallbackRequest) Equal(that interface{}) bool {
+	if that == nil {
+		return this == nil
+	}
+
+	var that1 *DetachStreamCallbackRequest
+	switch t := that.(type) {
+	case *DetachStreamCallbackRequest:
+		that1 = t
+	case DetachStreamCallbackRequest:
+		that1 = &t
+	default:
+		return false
+	}
+
+	return proto.Equal(this, that1)
+}
+
+// Marshal an object of type DetachStreamCallbackResponse to the protobuf v3 wire format
+func (val *DetachStreamCallbackResponse) Marshal() ([]byte, error) {
+	return proto.Marshal(val)
+}
+
+// Unmarshal an object of type DetachStreamCallbackResponse from the protobuf v3 wire format
+func (val *DetachStreamCallbackResponse) Unmarshal(buf []byte) error {
+	return proto.Unmarshal(buf, val)
+}
+
+// Size returns the size of the object, in bytes, once serialized
+func (val *DetachStreamCallbackResponse) Size() int {
+	return proto.Size(val)
+}
+
+// Equal returns whether two DetachStreamCallbackResponse values are equivalent by recursively
+// comparing the message's fields.
+// For more information see the documentation for
+// https://pkg.go.dev/google.golang.org/protobuf/proto#Equal
+func (this *DetachStreamCallbackResponse) Equal(that interface{}) bool {
+	if that == nil {
+		return this == nil
+	}
+
+	var that1 *DetachStreamCallbackResponse
+	switch t := that.(type) {
+	case *DetachStreamCallbackResponse:
+		that1 = t
+	case DetachStreamCallbackResponse:
+		that1 = &t
+	default:
+		return false
+	}
+
+	return proto.Equal(this, that1)
+}
+
+// Marshal an object of type NotifyStreamRequest to the protobuf v3 wire format
+func (val *NotifyStreamRequest) Marshal() ([]byte, error) {
+	return proto.Marshal(val)
+}
+
+// Unmarshal an object of type NotifyStreamRequest from the protobuf v3 wire format
+func (val *NotifyStreamRequest) Unmarshal(buf []byte) error {
+	return proto.Unmarshal(buf, val)
+}
+
+// Size returns the size of the object, in bytes, once serialized
+func (val *NotifyStreamRequest) Size() int {
+	return proto.Size(val)
+}
+
+// Equal returns whether two NotifyStreamRequest values are equivalent by recursively
+// comparing the message's fields.
+// For more information see the documentation for
+// https://pkg.go.dev/google.golang.org/protobuf/proto#Equal
+func (this *NotifyStreamRequest) Equal(that interface{}) bool {
+	if that == nil {
+		return this == nil
+	}
+
+	var that1 *NotifyStreamRequest
+	switch t := that.(type) {
+	case *NotifyStreamRequest:
+		that1 = t
+	case NotifyStreamRequest:
+		that1 = &t
+	default:
+		return false
+	}
+
+	return proto.Equal(this, that1)
+}
+
+// Marshal an object of type NotifyStreamResponse to the protobuf v3 wire format
+func (val *NotifyStreamResponse) Marshal() ([]byte, error) {
+	return proto.Marshal(val)
+}
+
+// Unmarshal an object of type NotifyStreamResponse from the protobuf v3 wire format
+func (val *NotifyStreamResponse) Unmarshal(buf []byte) error {
+	return proto.Unmarshal(buf, val)
+}
+
+// Size returns the size of the object, in bytes, once serialized
+func (val *NotifyStreamResponse) Size() int {
+	return proto.Size(val)
+}
+
+// Equal returns whether two NotifyStreamResponse values are equivalent by recursively
+// comparing the message's fields.
+// For more information see the documentation for
+// https://pkg.go.dev/google.golang.org/protobuf/proto#Equal
+func (this *NotifyStreamResponse) Equal(that interface{}) bool {
+	if that == nil {
+		return this == nil
+	}
+
+	var that1 *NotifyStreamResponse
+	switch t := that.(type) {
+	case *NotifyStreamResponse:
+		that1 = t
+	case NotifyStreamResponse:
+		that1 = &t
+	default:
+		return false
+	}
+
+	return proto.Equal(this, that1)
+}
+
+// Marshal an object of type DescribeStreamNotifierRequest to the protobuf v3 wire format
+func (val *DescribeStreamNotifierRequest) Marshal() ([]byte, error) {
+	return proto.Marshal(val)
+}
+
+// Unmarshal an object of type DescribeStreamNotifierRequest from the protobuf v3 wire format
+func (val *DescribeStreamNotifierRequest) Unmarshal(buf []byte) error {
+	return proto.Unmarshal(buf, val)
+}
+
+// Size returns the size of the object, in bytes, once serialized
+func (val *DescribeStreamNotifierRequest) Size() int {
+	return proto.Size(val)
+}
+
+// Equal returns whether two DescribeStreamNotifierRequest values are equivalent by recursively
+// comparing the message's fields.
+// For more information see the documentation for
+// https://pkg.go.dev/google.golang.org/protobuf/proto#Equal
+func (this *DescribeStreamNotifierRequest) Equal(that interface{}) bool {
+	if that == nil {
+		return this == nil
+	}
+
+	var that1 *DescribeStreamNotifierRequest
+	switch t := that.(type) {
+	case *DescribeStreamNotifierRequest:
+		that1 = t
+	case DescribeStreamNotifierRequest:
+		that1 = &t
+	default:
+		return false
+	}
+
+	return proto.Equal(this, that1)
+}
+
+// Marshal an object of type DescribeStreamNotifierResponse to the protobuf v3 wire format
+func (val *DescribeStreamNotifierResponse) Marshal() ([]byte, error) {
+	return proto.Marshal(val)
+}
+
+// Unmarshal an object of type DescribeStreamNotifierResponse from the protobuf v3 wire format
+func (val *DescribeStreamNotifierResponse) Unmarshal(buf []byte) error {
+	return proto.Unmarshal(buf, val)
+}
+
+// Size returns the size of the object, in bytes, once serialized
+func (val *DescribeStreamNotifierResponse) Size() int {
+	return proto.Size(val)
+}
+
+// Equal returns whether two DescribeStreamNotifierResponse values are equivalent by recursively
+// comparing the message's fields.
+// For more information see the documentation for
+// https://pkg.go.dev/google.golang.org/protobuf/proto#Equal
+func (this *DescribeStreamNotifierResponse) Equal(that interface{}) bool {
+	if that == nil {
+		return this == nil
+	}
+
+	var that1 *DescribeStreamNotifierResponse
+	switch t := that.(type) {
+	case *DescribeStreamNotifierResponse:
+		that1 = t
+	case DescribeStreamNotifierResponse:
+		that1 = &t
+	default:
+		return false
+	}
+
+	return proto.Equal(this, that1)
+}
+
+// Marshal an object of type PollStreamNotifierRequest to the protobuf v3 wire format
+func (val *PollStreamNotifierRequest) Marshal() ([]byte, error) {
+	return proto.Marshal(val)
+}
+
+// Unmarshal an object of type PollStreamNotifierRequest from the protobuf v3 wire format
+func (val *PollStreamNotifierRequest) Unmarshal(buf []byte) error {
+	return proto.Unmarshal(buf, val)
+}
+
+// Size returns the size of the object, in bytes, once serialized
+func (val *PollStreamNotifierRequest) Size() int {
+	return proto.Size(val)
+}
+
+// Equal returns whether two PollStreamNotifierRequest values are equivalent by recursively
+// comparing the message's fields.
+// For more information see the documentation for
+// https://pkg.go.dev/google.golang.org/protobuf/proto#Equal
+func (this *PollStreamNotifierRequest) Equal(that interface{}) bool {
+	if that == nil {
+		return this == nil
+	}
+
+	var that1 *PollStreamNotifierRequest
+	switch t := that.(type) {
+	case *PollStreamNotifierRequest:
+		that1 = t
+	case PollStreamNotifierRequest:
+		that1 = &t
+	default:
+		return false
+	}
+
+	return proto.Equal(this, that1)
+}
+
+// Marshal an object of type PollStreamNotifierResponse to the protobuf v3 wire format
+func (val *PollStreamNotifierResponse) Marshal() ([]byte, error) {
+	return proto.Marshal(val)
+}
+
+// Unmarshal an object of type PollStreamNotifierResponse from the protobuf v3 wire format
+func (val *PollStreamNotifierResponse) Unmarshal(buf []byte) error {
+	return proto.Unmarshal(buf, val)
+}
+
+// Size returns the size of the object, in bytes, once serialized
+func (val *PollStreamNotifierResponse) Size() int {
+	return proto.Size(val)
+}
+
+// Equal returns whether two PollStreamNotifierResponse values are equivalent by recursively
+// comparing the message's fields.
+// For more information see the documentation for
+// https://pkg.go.dev/google.golang.org/protobuf/proto#Equal
+func (this *PollStreamNotifierResponse) Equal(that interface{}) bool {
+	if that == nil {
+		return this == nil
+	}
+
+	var that1 *PollStreamNotifierResponse
+	switch t := that.(type) {
+	case *PollStreamNotifierResponse:
+		that1 = t
+	case PollStreamNotifierResponse:
+		that1 = &t
+	default:
+		return false
+	}
+
+	return proto.Equal(this, that1)
+}

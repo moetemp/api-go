@@ -143,6 +143,11 @@ const (
 	WorkflowService_TerminateNexusOperationExecution_FullMethodName             = "/temporal.api.workflowservice.v1.WorkflowService/TerminateNexusOperationExecution"
 	WorkflowService_DeleteNexusOperationExecution_FullMethodName                = "/temporal.api.workflowservice.v1.WorkflowService/DeleteNexusOperationExecution"
 	WorkflowService_PollWorkflowExecutionTimeSkipping_FullMethodName            = "/temporal.api.workflowservice.v1.WorkflowService/PollWorkflowExecutionTimeSkipping"
+	WorkflowService_AttachStreamCallback_FullMethodName                         = "/temporal.api.workflowservice.v1.WorkflowService/AttachStreamCallback"
+	WorkflowService_DetachStreamCallback_FullMethodName                         = "/temporal.api.workflowservice.v1.WorkflowService/DetachStreamCallback"
+	WorkflowService_NotifyStream_FullMethodName                                 = "/temporal.api.workflowservice.v1.WorkflowService/NotifyStream"
+	WorkflowService_DescribeStreamNotifier_FullMethodName                       = "/temporal.api.workflowservice.v1.WorkflowService/DescribeStreamNotifier"
+	WorkflowService_PollStreamNotifier_FullMethodName                           = "/temporal.api.workflowservice.v1.WorkflowService/PollStreamNotifier"
 )
 
 // WorkflowServiceClient is the client API for WorkflowService service.
@@ -877,6 +882,46 @@ type WorkflowServiceClient interface {
 	//	aip.dev/not-precedent: Nexus operation deletion not exposed to HTTP, users should use cancel or terminate. --)
 	DeleteNexusOperationExecution(ctx context.Context, in *DeleteNexusOperationExecutionRequest, opts ...grpc.CallOption) (*DeleteNexusOperationExecutionResponse, error)
 	PollWorkflowExecutionTimeSkipping(ctx context.Context, in *PollWorkflowExecutionTimeSkippingRequest, opts ...grpc.CallOption) (*PollWorkflowExecutionTimeSkippingResponse, error)
+	// AttachStreamCallback attaches a callback to the notifier of a stream. The callback receives the
+	// stream's progress while it is open and one completion when it closes. A Nexus handler whose
+	// operation returns a stream calls it with the caller's callback when the operation starts.
+	//
+	// (-- api-linter: core::0127::http-annotation=disabled
+	//
+	//	aip.dev/not-precedent: SDKs reach the stream notifier through gRPC. --)
+	AttachStreamCallback(ctx context.Context, in *AttachStreamCallbackRequest, opts ...grpc.CallOption) (*AttachStreamCallbackResponse, error)
+	// DetachStreamCallback removes a callback from the notifier of a stream. The notifier completes
+	// the callback's operation as canceled and sends it no more progress. A Nexus handler calls it
+	// when the caller cancels the operation.
+	//
+	// (-- api-linter: core::0127::http-annotation=disabled
+	//
+	//	aip.dev/not-precedent: SDKs reach the stream notifier through gRPC. --)
+	DetachStreamCallback(ctx context.Context, in *DetachStreamCallbackRequest, opts ...grpc.CallOption) (*DetachStreamCallbackResponse, error)
+	// NotifyStream tells the notifier of a stream that the stream moved, or that it closed. The
+	// notifier passes the latest notification on to every attached callback as progress, and on close
+	// completes them. Producers fold their notifications and keep at most one call in flight.
+	//
+	// (-- api-linter: core::0127::http-annotation=disabled
+	//
+	//	aip.dev/not-precedent: SDKs reach the stream notifier through gRPC. --)
+	NotifyStream(ctx context.Context, in *NotifyStreamRequest, opts ...grpc.CallOption) (*NotifyStreamResponse, error)
+	// DescribeStreamNotifier returns the state of the notifier of a stream and its callbacks. It is
+	// for operators and tools.
+	//
+	// (-- api-linter: core::0127::http-annotation=disabled
+	//
+	//	aip.dev/not-precedent: SDKs reach the stream notifier through gRPC. --)
+	DescribeStreamNotifier(ctx context.Context, in *DescribeStreamNotifierRequest, opts ...grpc.CallOption) (*DescribeStreamNotifierResponse, error)
+	// PollStreamNotifier waits until the notifier of a stream has a counter above `after_counter`,
+	// or the stream is closed. It returns with no change after a wait limit set by the server
+	// (`streamnotifier.pollMaxWait`). A client that reads a stream calls it after a read that
+	// found nothing and armed the topic, in place of another blocking read on the store.
+	//
+	// (-- api-linter: core::0127::http-annotation=disabled
+	//
+	//	aip.dev/not-precedent: SDKs reach the stream notifier through gRPC. --)
+	PollStreamNotifier(ctx context.Context, in *PollStreamNotifierRequest, opts ...grpc.CallOption) (*PollStreamNotifierResponse, error)
 }
 
 type workflowServiceClient struct {
@@ -2117,6 +2162,56 @@ func (c *workflowServiceClient) PollWorkflowExecutionTimeSkipping(ctx context.Co
 	return out, nil
 }
 
+func (c *workflowServiceClient) AttachStreamCallback(ctx context.Context, in *AttachStreamCallbackRequest, opts ...grpc.CallOption) (*AttachStreamCallbackResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AttachStreamCallbackResponse)
+	err := c.cc.Invoke(ctx, WorkflowService_AttachStreamCallback_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *workflowServiceClient) DetachStreamCallback(ctx context.Context, in *DetachStreamCallbackRequest, opts ...grpc.CallOption) (*DetachStreamCallbackResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(DetachStreamCallbackResponse)
+	err := c.cc.Invoke(ctx, WorkflowService_DetachStreamCallback_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *workflowServiceClient) NotifyStream(ctx context.Context, in *NotifyStreamRequest, opts ...grpc.CallOption) (*NotifyStreamResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(NotifyStreamResponse)
+	err := c.cc.Invoke(ctx, WorkflowService_NotifyStream_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *workflowServiceClient) DescribeStreamNotifier(ctx context.Context, in *DescribeStreamNotifierRequest, opts ...grpc.CallOption) (*DescribeStreamNotifierResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(DescribeStreamNotifierResponse)
+	err := c.cc.Invoke(ctx, WorkflowService_DescribeStreamNotifier_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *workflowServiceClient) PollStreamNotifier(ctx context.Context, in *PollStreamNotifierRequest, opts ...grpc.CallOption) (*PollStreamNotifierResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(PollStreamNotifierResponse)
+	err := c.cc.Invoke(ctx, WorkflowService_PollStreamNotifier_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // WorkflowServiceServer is the server API for WorkflowService service.
 // All implementations must embed UnimplementedWorkflowServiceServer
 // for forward compatibility.
@@ -2849,6 +2944,46 @@ type WorkflowServiceServer interface {
 	//	aip.dev/not-precedent: Nexus operation deletion not exposed to HTTP, users should use cancel or terminate. --)
 	DeleteNexusOperationExecution(context.Context, *DeleteNexusOperationExecutionRequest) (*DeleteNexusOperationExecutionResponse, error)
 	PollWorkflowExecutionTimeSkipping(context.Context, *PollWorkflowExecutionTimeSkippingRequest) (*PollWorkflowExecutionTimeSkippingResponse, error)
+	// AttachStreamCallback attaches a callback to the notifier of a stream. The callback receives the
+	// stream's progress while it is open and one completion when it closes. A Nexus handler whose
+	// operation returns a stream calls it with the caller's callback when the operation starts.
+	//
+	// (-- api-linter: core::0127::http-annotation=disabled
+	//
+	//	aip.dev/not-precedent: SDKs reach the stream notifier through gRPC. --)
+	AttachStreamCallback(context.Context, *AttachStreamCallbackRequest) (*AttachStreamCallbackResponse, error)
+	// DetachStreamCallback removes a callback from the notifier of a stream. The notifier completes
+	// the callback's operation as canceled and sends it no more progress. A Nexus handler calls it
+	// when the caller cancels the operation.
+	//
+	// (-- api-linter: core::0127::http-annotation=disabled
+	//
+	//	aip.dev/not-precedent: SDKs reach the stream notifier through gRPC. --)
+	DetachStreamCallback(context.Context, *DetachStreamCallbackRequest) (*DetachStreamCallbackResponse, error)
+	// NotifyStream tells the notifier of a stream that the stream moved, or that it closed. The
+	// notifier passes the latest notification on to every attached callback as progress, and on close
+	// completes them. Producers fold their notifications and keep at most one call in flight.
+	//
+	// (-- api-linter: core::0127::http-annotation=disabled
+	//
+	//	aip.dev/not-precedent: SDKs reach the stream notifier through gRPC. --)
+	NotifyStream(context.Context, *NotifyStreamRequest) (*NotifyStreamResponse, error)
+	// DescribeStreamNotifier returns the state of the notifier of a stream and its callbacks. It is
+	// for operators and tools.
+	//
+	// (-- api-linter: core::0127::http-annotation=disabled
+	//
+	//	aip.dev/not-precedent: SDKs reach the stream notifier through gRPC. --)
+	DescribeStreamNotifier(context.Context, *DescribeStreamNotifierRequest) (*DescribeStreamNotifierResponse, error)
+	// PollStreamNotifier waits until the notifier of a stream has a counter above `after_counter`,
+	// or the stream is closed. It returns with no change after a wait limit set by the server
+	// (`streamnotifier.pollMaxWait`). A client that reads a stream calls it after a read that
+	// found nothing and armed the topic, in place of another blocking read on the store.
+	//
+	// (-- api-linter: core::0127::http-annotation=disabled
+	//
+	//	aip.dev/not-precedent: SDKs reach the stream notifier through gRPC. --)
+	PollStreamNotifier(context.Context, *PollStreamNotifierRequest) (*PollStreamNotifierResponse, error)
 	mustEmbedUnimplementedWorkflowServiceServer()
 }
 
@@ -3227,6 +3362,21 @@ func (UnimplementedWorkflowServiceServer) DeleteNexusOperationExecution(context.
 }
 func (UnimplementedWorkflowServiceServer) PollWorkflowExecutionTimeSkipping(context.Context, *PollWorkflowExecutionTimeSkippingRequest) (*PollWorkflowExecutionTimeSkippingResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method PollWorkflowExecutionTimeSkipping not implemented")
+}
+func (UnimplementedWorkflowServiceServer) AttachStreamCallback(context.Context, *AttachStreamCallbackRequest) (*AttachStreamCallbackResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method AttachStreamCallback not implemented")
+}
+func (UnimplementedWorkflowServiceServer) DetachStreamCallback(context.Context, *DetachStreamCallbackRequest) (*DetachStreamCallbackResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method DetachStreamCallback not implemented")
+}
+func (UnimplementedWorkflowServiceServer) NotifyStream(context.Context, *NotifyStreamRequest) (*NotifyStreamResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method NotifyStream not implemented")
+}
+func (UnimplementedWorkflowServiceServer) DescribeStreamNotifier(context.Context, *DescribeStreamNotifierRequest) (*DescribeStreamNotifierResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method DescribeStreamNotifier not implemented")
+}
+func (UnimplementedWorkflowServiceServer) PollStreamNotifier(context.Context, *PollStreamNotifierRequest) (*PollStreamNotifierResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method PollStreamNotifier not implemented")
 }
 func (UnimplementedWorkflowServiceServer) mustEmbedUnimplementedWorkflowServiceServer() {}
 func (UnimplementedWorkflowServiceServer) testEmbeddedByValue()                         {}
@@ -5463,6 +5613,96 @@ func _WorkflowService_PollWorkflowExecutionTimeSkipping_Handler(srv interface{},
 	return interceptor(ctx, in, info, handler)
 }
 
+func _WorkflowService_AttachStreamCallback_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AttachStreamCallbackRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(WorkflowServiceServer).AttachStreamCallback(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: WorkflowService_AttachStreamCallback_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(WorkflowServiceServer).AttachStreamCallback(ctx, req.(*AttachStreamCallbackRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _WorkflowService_DetachStreamCallback_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DetachStreamCallbackRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(WorkflowServiceServer).DetachStreamCallback(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: WorkflowService_DetachStreamCallback_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(WorkflowServiceServer).DetachStreamCallback(ctx, req.(*DetachStreamCallbackRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _WorkflowService_NotifyStream_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(NotifyStreamRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(WorkflowServiceServer).NotifyStream(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: WorkflowService_NotifyStream_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(WorkflowServiceServer).NotifyStream(ctx, req.(*NotifyStreamRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _WorkflowService_DescribeStreamNotifier_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DescribeStreamNotifierRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(WorkflowServiceServer).DescribeStreamNotifier(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: WorkflowService_DescribeStreamNotifier_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(WorkflowServiceServer).DescribeStreamNotifier(ctx, req.(*DescribeStreamNotifierRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _WorkflowService_PollStreamNotifier_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PollStreamNotifierRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(WorkflowServiceServer).PollStreamNotifier(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: WorkflowService_PollStreamNotifier_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(WorkflowServiceServer).PollStreamNotifier(ctx, req.(*PollStreamNotifierRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // WorkflowService_ServiceDesc is the grpc.ServiceDesc for WorkflowService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -5961,6 +6201,26 @@ var WorkflowService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "PollWorkflowExecutionTimeSkipping",
 			Handler:    _WorkflowService_PollWorkflowExecutionTimeSkipping_Handler,
+		},
+		{
+			MethodName: "AttachStreamCallback",
+			Handler:    _WorkflowService_AttachStreamCallback_Handler,
+		},
+		{
+			MethodName: "DetachStreamCallback",
+			Handler:    _WorkflowService_DetachStreamCallback_Handler,
+		},
+		{
+			MethodName: "NotifyStream",
+			Handler:    _WorkflowService_NotifyStream_Handler,
+		},
+		{
+			MethodName: "DescribeStreamNotifier",
+			Handler:    _WorkflowService_DescribeStreamNotifier_Handler,
+		},
+		{
+			MethodName: "PollStreamNotifier",
+			Handler:    _WorkflowService_PollStreamNotifier_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
