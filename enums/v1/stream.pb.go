@@ -38,6 +38,13 @@ const (
 	// `streamnotifier.ownerCheckInterval`. A completed run gives no result. A failed, canceled,
 	// terminated or timed-out run gives the run's own failure.
 	STREAM_OWNER_KIND_ACTIVITY StreamOwnerKind = 2
+	// An Activity that a Workflow scheduled owns the stream. `workflow_id` names the Workflow,
+	// `run_id` the run that scheduled the Activity, and `activity_id` the Activity. The stream
+	// closes when the Workflow sees the Activity end. If the Activity is no longer pending in the
+	// run and no close came, the stream notifier closes the stream with a failure, after
+	// `streamnotifier.ownerStartGrace` from its start and `streamnotifier.ownerCloseGrace` from
+	// the first check that found the Activity gone.
+	STREAM_OWNER_KIND_WORKFLOW_ACTIVITY StreamOwnerKind = 3
 )
 
 // Enum value maps for StreamOwnerKind.
@@ -46,11 +53,13 @@ var (
 		0: "STREAM_OWNER_KIND_UNSPECIFIED",
 		1: "STREAM_OWNER_KIND_WORKFLOW",
 		2: "STREAM_OWNER_KIND_ACTIVITY",
+		3: "STREAM_OWNER_KIND_WORKFLOW_ACTIVITY",
 	}
 	StreamOwnerKind_value = map[string]int32{
-		"STREAM_OWNER_KIND_UNSPECIFIED": 0,
-		"STREAM_OWNER_KIND_WORKFLOW":    1,
-		"STREAM_OWNER_KIND_ACTIVITY":    2,
+		"STREAM_OWNER_KIND_UNSPECIFIED":       0,
+		"STREAM_OWNER_KIND_WORKFLOW":          1,
+		"STREAM_OWNER_KIND_ACTIVITY":          2,
+		"STREAM_OWNER_KIND_WORKFLOW_ACTIVITY": 3,
 	}
 )
 
@@ -68,6 +77,8 @@ func (x StreamOwnerKind) String() string {
 		return "Workflow"
 	case STREAM_OWNER_KIND_ACTIVITY:
 		return "Activity"
+	case STREAM_OWNER_KIND_WORKFLOW_ACTIVITY:
+		return "WorkflowActivity"
 	default:
 		return strconv.Itoa(int(x))
 	}
@@ -95,11 +106,12 @@ var File_temporal_api_enums_v1_stream_proto protoreflect.FileDescriptor
 
 const file_temporal_api_enums_v1_stream_proto_rawDesc = "" +
 	"\n" +
-	"\"temporal/api/enums/v1/stream.proto\x12\x15temporal.api.enums.v1*t\n" +
+	"\"temporal/api/enums/v1/stream.proto\x12\x15temporal.api.enums.v1*\x9d\x01\n" +
 	"\x0fStreamOwnerKind\x12!\n" +
 	"\x1dSTREAM_OWNER_KIND_UNSPECIFIED\x10\x00\x12\x1e\n" +
 	"\x1aSTREAM_OWNER_KIND_WORKFLOW\x10\x01\x12\x1e\n" +
-	"\x1aSTREAM_OWNER_KIND_ACTIVITY\x10\x02B\x83\x01\n" +
+	"\x1aSTREAM_OWNER_KIND_ACTIVITY\x10\x02\x12'\n" +
+	"#STREAM_OWNER_KIND_WORKFLOW_ACTIVITY\x10\x03B\x83\x01\n" +
 	"\x18io.temporal.api.enums.v1B\vStreamProtoP\x01Z!go.temporal.io/api/enums/v1;enums\xaa\x02\x17Temporalio.Api.Enums.V1\xea\x02\x1aTemporalio::Api::Enums::V1b\x06proto3"
 
 var (
