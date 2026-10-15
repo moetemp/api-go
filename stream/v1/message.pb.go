@@ -30,17 +30,20 @@ const (
 type StreamReference struct {
 	state     protoimpl.MessageState `protogen:"open.v1"`
 	OwnerKind v1.StreamOwnerKind     `protobuf:"varint,1,opt,name=owner_kind,json=ownerKind,proto3,enum=temporal.api.enums.v1.StreamOwnerKind" json:"owner_kind,omitempty"`
-	// The owning Workflow, for `STREAM_OWNER_KIND_WORKFLOW`. Empty for other kinds.
+	// The owning Workflow, for `STREAM_OWNER_KIND_WORKFLOW`. The Workflow that scheduled the
+	// owning Activity, for `STREAM_OWNER_KIND_WORKFLOW_ACTIVITY`. Empty for other kinds.
 	WorkflowId string `protobuf:"bytes,2,opt,name=workflow_id,json=workflowId,proto3" json:"workflow_id,omitempty"`
 	// For `STREAM_OWNER_KIND_WORKFLOW`, the id of the first run in the owning Workflow's run
 	// chain. The stream notifier is keyed by it, so one notifier serves the stream across the
 	// chain's runs, and a stream that reuses the Workflow id in a new chain gets a notifier of its
-	// own. For `STREAM_OWNER_KIND_ACTIVITY`, the id of the owning Activity run. An empty run id is
-	// refused.
+	// own. For `STREAM_OWNER_KIND_ACTIVITY`, the id of the owning Activity run. For
+	// `STREAM_OWNER_KIND_WORKFLOW_ACTIVITY`, the id of the run that scheduled the Activity, not
+	// the chain's first run. An empty run id is refused.
 	RunId string `protobuf:"bytes,3,opt,name=run_id,json=runId,proto3" json:"run_id,omitempty"`
 	// The stream's topic within its owner.
 	Topic string `protobuf:"bytes,4,opt,name=topic,proto3" json:"topic,omitempty"`
-	// The owning standalone Activity, for `STREAM_OWNER_KIND_ACTIVITY`. Empty for other kinds.
+	// The owning standalone Activity, for `STREAM_OWNER_KIND_ACTIVITY`. The owning Activity's id
+	// in the scheduling run, for `STREAM_OWNER_KIND_WORKFLOW_ACTIVITY`. Empty for other kinds.
 	ActivityId    string `protobuf:"bytes,5,opt,name=activity_id,json=activityId,proto3" json:"activity_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
