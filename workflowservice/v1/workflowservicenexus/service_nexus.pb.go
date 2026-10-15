@@ -12,11 +12,13 @@ var TemporalAPIWorkflowserviceV1WorkflowService = struct {
 	SignalWithStartWorkflowExecution nexus.OperationReference[workflowservicev1.SignalWithStartWorkflowExecutionRequest, workflowservicev1.SignalWithStartWorkflowExecutionResponse]
 	AttachStreamCallback             nexus.OperationReference[workflowservicev1.AttachStreamCallbackRequest, workflowservicev1.AttachStreamCallbackResponse]
 	DetachStreamCallback             nexus.OperationReference[workflowservicev1.DetachStreamCallbackRequest, workflowservicev1.DetachStreamCallbackResponse]
+	WaitStreamCallback               nexus.OperationReference[workflowservicev1.WaitStreamCallbackRequest, workflowservicev1.WaitStreamCallbackResponse]
 	NotifyStream                     nexus.OperationReference[workflowservicev1.NotifyStreamRequest, workflowservicev1.NotifyStreamResponse]
 }{
 	ServiceName:                      "temporal.api.workflowservice.v1.WorkflowService",
 	SignalWithStartWorkflowExecution: nexus.NewOperationReference[workflowservicev1.SignalWithStartWorkflowExecutionRequest, workflowservicev1.SignalWithStartWorkflowExecutionResponse]("SignalWithStartWorkflowExecution"),
 	AttachStreamCallback:             nexus.NewOperationReference[workflowservicev1.AttachStreamCallbackRequest, workflowservicev1.AttachStreamCallbackResponse]("AttachStreamCallback"),
 	DetachStreamCallback:             nexus.NewOperationReference[workflowservicev1.DetachStreamCallbackRequest, workflowservicev1.DetachStreamCallbackResponse]("DetachStreamCallback"),
+	WaitStreamCallback:               nexus.NewOperationReference[workflowservicev1.WaitStreamCallbackRequest, workflowservicev1.WaitStreamCallbackResponse]("WaitStreamCallback"),
 	NotifyStream:                     nexus.NewOperationReference[workflowservicev1.NotifyStreamRequest, workflowservicev1.NotifyStreamResponse]("NotifyStream"),
 }
