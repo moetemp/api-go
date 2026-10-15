@@ -9,6 +9,7 @@ var (
 	StreamOwnerKind_shorthandValue = map[string]int32{
 		"Unspecified": 0,
 		"Workflow":    1,
+		"Activity":    2,
 	}
 )
 

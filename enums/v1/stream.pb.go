@@ -32,6 +32,12 @@ const (
 	// failure. If the Workflow's run chain ends with no close and callbacks are attached, the
 	// stream notifier closes the stream with a failure within `streamnotifier.ownerCheckInterval`.
 	STREAM_OWNER_KIND_WORKFLOW StreamOwnerKind = 1
+	// A standalone Activity owns the stream. The Activity closes the stream itself, with a result
+	// or a failure. If the Activity run reaches a terminal status with no close and callbacks
+	// are attached, the stream notifier closes the stream within
+	// `streamnotifier.ownerCheckInterval`. A completed run gives no result. A failed, canceled,
+	// terminated or timed-out run gives the run's own failure.
+	STREAM_OWNER_KIND_ACTIVITY StreamOwnerKind = 2
 )
 
 // Enum value maps for StreamOwnerKind.
@@ -39,10 +45,12 @@ var (
 	StreamOwnerKind_name = map[int32]string{
 		0: "STREAM_OWNER_KIND_UNSPECIFIED",
 		1: "STREAM_OWNER_KIND_WORKFLOW",
+		2: "STREAM_OWNER_KIND_ACTIVITY",
 	}
 	StreamOwnerKind_value = map[string]int32{
 		"STREAM_OWNER_KIND_UNSPECIFIED": 0,
 		"STREAM_OWNER_KIND_WORKFLOW":    1,
+		"STREAM_OWNER_KIND_ACTIVITY":    2,
 	}
 )
 
@@ -58,6 +66,8 @@ func (x StreamOwnerKind) String() string {
 		return "Unspecified"
 	case STREAM_OWNER_KIND_WORKFLOW:
 		return "Workflow"
+	case STREAM_OWNER_KIND_ACTIVITY:
+		return "Activity"
 	default:
 		return strconv.Itoa(int(x))
 	}
@@ -85,10 +95,11 @@ var File_temporal_api_enums_v1_stream_proto protoreflect.FileDescriptor
 
 const file_temporal_api_enums_v1_stream_proto_rawDesc = "" +
 	"\n" +
-	"\"temporal/api/enums/v1/stream.proto\x12\x15temporal.api.enums.v1*T\n" +
+	"\"temporal/api/enums/v1/stream.proto\x12\x15temporal.api.enums.v1*t\n" +
 	"\x0fStreamOwnerKind\x12!\n" +
 	"\x1dSTREAM_OWNER_KIND_UNSPECIFIED\x10\x00\x12\x1e\n" +
-	"\x1aSTREAM_OWNER_KIND_WORKFLOW\x10\x01B\x83\x01\n" +
+	"\x1aSTREAM_OWNER_KIND_WORKFLOW\x10\x01\x12\x1e\n" +
+	"\x1aSTREAM_OWNER_KIND_ACTIVITY\x10\x02B\x83\x01\n" +
 	"\x18io.temporal.api.enums.v1B\vStreamProtoP\x01Z!go.temporal.io/api/enums/v1;enums\xaa\x02\x17Temporalio.Api.Enums.V1\xea\x02\x1aTemporalio::Api::Enums::V1b\x06proto3"
 
 var (
