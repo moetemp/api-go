@@ -30,14 +30,18 @@ const (
 type StreamReference struct {
 	state     protoimpl.MessageState `protogen:"open.v1"`
 	OwnerKind v1.StreamOwnerKind     `protobuf:"varint,1,opt,name=owner_kind,json=ownerKind,proto3,enum=temporal.api.enums.v1.StreamOwnerKind" json:"owner_kind,omitempty"`
-	// The owning Workflow, for `STREAM_OWNER_KIND_WORKFLOW`.
+	// The owning Workflow, for `STREAM_OWNER_KIND_WORKFLOW`. Empty for other kinds.
 	WorkflowId string `protobuf:"bytes,2,opt,name=workflow_id,json=workflowId,proto3" json:"workflow_id,omitempty"`
-	// The id of the first run in the owning Workflow's run chain. The stream notifier is keyed by
-	// it, so one notifier serves the stream across the chain's runs, and a stream that reuses the
-	// Workflow id in a new chain gets a notifier of its own. An empty run id is refused.
+	// For `STREAM_OWNER_KIND_WORKFLOW`, the id of the first run in the owning Workflow's run
+	// chain. The stream notifier is keyed by it, so one notifier serves the stream across the
+	// chain's runs, and a stream that reuses the Workflow id in a new chain gets a notifier of its
+	// own. For `STREAM_OWNER_KIND_ACTIVITY`, the id of the owning Activity run. An empty run id is
+	// refused.
 	RunId string `protobuf:"bytes,3,opt,name=run_id,json=runId,proto3" json:"run_id,omitempty"`
 	// The stream's topic within its owner.
-	Topic         string `protobuf:"bytes,4,opt,name=topic,proto3" json:"topic,omitempty"`
+	Topic string `protobuf:"bytes,4,opt,name=topic,proto3" json:"topic,omitempty"`
+	// The owning standalone Activity, for `STREAM_OWNER_KIND_ACTIVITY`. Empty for other kinds.
+	ActivityId    string `protobuf:"bytes,5,opt,name=activity_id,json=activityId,proto3" json:"activity_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -96,6 +100,13 @@ func (x *StreamReference) GetRunId() string {
 func (x *StreamReference) GetTopic() string {
 	if x != nil {
 		return x.Topic
+	}
+	return ""
+}
+
+func (x *StreamReference) GetActivityId() string {
+	if x != nil {
+		return x.ActivityId
 	}
 	return ""
 }
@@ -488,14 +499,16 @@ var File_temporal_api_stream_v1_message_proto protoreflect.FileDescriptor
 
 const file_temporal_api_stream_v1_message_proto_rawDesc = "" +
 	"\n" +
-	"$temporal/api/stream/v1/message.proto\x12\x16temporal.api.stream.v1\x1a\x1fgoogle/protobuf/timestamp.proto\x1a$temporal/api/common/v1/message.proto\x1a\"temporal/api/enums/v1/common.proto\x1a\"temporal/api/enums/v1/stream.proto\x1a%temporal/api/failure/v1/message.proto\"\xa6\x01\n" +
+	"$temporal/api/stream/v1/message.proto\x12\x16temporal.api.stream.v1\x1a\x1fgoogle/protobuf/timestamp.proto\x1a$temporal/api/common/v1/message.proto\x1a\"temporal/api/enums/v1/common.proto\x1a\"temporal/api/enums/v1/stream.proto\x1a%temporal/api/failure/v1/message.proto\"\xc7\x01\n" +
 	"\x0fStreamReference\x12E\n" +
 	"\n" +
 	"owner_kind\x18\x01 \x01(\x0e2&.temporal.api.enums.v1.StreamOwnerKindR\townerKind\x12\x1f\n" +
 	"\vworkflow_id\x18\x02 \x01(\tR\n" +
 	"workflowId\x12\x15\n" +
 	"\x06run_id\x18\x03 \x01(\tR\x05runId\x12\x14\n" +
-	"\x05topic\x18\x04 \x01(\tR\x05topic\"\xa3\x04\n" +
+	"\x05topic\x18\x04 \x01(\tR\x05topic\x12\x1f\n" +
+	"\vactivity_id\x18\x05 \x01(\tR\n" +
+	"activityId\"\xa3\x04\n" +
 	"\x12StreamCallbackInfo\x12\x1d\n" +
 	"\n" +
 	"request_id\x18\x01 \x01(\tR\trequestId\x12<\n" +
