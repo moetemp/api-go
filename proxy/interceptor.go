@@ -3241,6 +3241,28 @@ func visitPayloads(
 
 			ctx.Context = prevCtx
 
+		case *notificationservice.OnProgressRequest:
+
+			if o == nil {
+				continue
+			}
+
+			prevCtx := ctx.Context
+			if options.ContextHook != nil {
+				var hookErr error
+				if ctx.Context, hookErr = options.ContextHook(prevCtx, o); hookErr != nil {
+					return hookErr
+				}
+			}
+
+			if o.SourceContext != nil {
+				if err := visitPayload(ctx, options, o, concState, &o.SourceContext); err != nil {
+					return err
+				}
+			}
+
+			ctx.Context = prevCtx
+
 		case *operatorservice.CreateNexusEndpointRequest:
 
 			if o == nil {
@@ -4790,6 +4812,62 @@ func visitPayloads(
 				concState,
 				o.GetStartWorkflow(),
 				o.GetUpdateWorkflow(),
+			); err != nil {
+				return err
+			}
+
+			ctx.Context = prevCtx
+
+		case *workflowservice.ExecuteSyncNexusOperationRequest:
+
+			if o == nil {
+				continue
+			}
+
+			prevCtx := ctx.Context
+			if options.ContextHook != nil {
+				var hookErr error
+				if ctx.Context, hookErr = options.ContextHook(prevCtx, o); hookErr != nil {
+					return hookErr
+				}
+			}
+
+			if o.Input != nil {
+				if err := visitPayload(ctx, options, o, concState, &o.Input); err != nil {
+					return err
+				}
+			}
+
+			ctx.Context = prevCtx
+
+		case *workflowservice.ExecuteSyncNexusOperationResponse:
+
+			if o == nil {
+				continue
+			}
+
+			prevCtx := ctx.Context
+			if options.ContextHook != nil {
+				var hookErr error
+				if ctx.Context, hookErr = options.ContextHook(prevCtx, o); hookErr != nil {
+					return hookErr
+				}
+			}
+
+			if o.GetResult() != nil {
+				result := o.GetResult()
+				if err := visitPayload(ctx, options, o, concState, &result); err != nil {
+					return err
+				}
+				o.Outcome = &workflowservice.ExecuteSyncNexusOperationResponse_Result{Result: result}
+			}
+
+			if err := visitPayloads(
+				ctx,
+				options,
+				o,
+				concState,
+				o.GetFailure(),
 			); err != nil {
 				return err
 			}
@@ -7277,6 +7355,19 @@ func visitFailures(ctx *VisitFailuresContext, options *VisitFailuresOptions, obj
 				options,
 				o.GetStartWorkflow(),
 				o.GetUpdateWorkflow(),
+			); err != nil {
+				return err
+			}
+
+		case *workflowservice.ExecuteSyncNexusOperationResponse:
+			if o == nil {
+				continue
+			}
+			ctx.Parent = o
+			if err := visitFailures(
+				ctx,
+				options,
+				o.GetFailure(),
 			); err != nil {
 				return err
 			}

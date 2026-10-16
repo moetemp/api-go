@@ -579,6 +579,12 @@ func visitPayloads(
 					if err := visitPayload(ctx, options, o, concState, &result); err != nil { return err }
 					o.Outcome = &workflowservice.PollNexusOperationExecutionResponse_Result{Result: result}
 				}
+				{{else if and (eq $type "*workflowservice.ExecuteSyncNexusOperationResponse") (eq . "Result")}}
+				if o.GetResult() != nil {
+					result := o.GetResult()
+					if err := visitPayload(ctx, options, o, concState, &result); err != nil { return err }
+					o.Outcome = &workflowservice.ExecuteSyncNexusOperationResponse_Result{Result: result}
+				}
 				{{else if and (eq $type "*notificationservice.OnCompleteRequest") (eq . "Success")}}
 				if o.GetSuccess() != nil {
 					success := o.GetSuccess()
