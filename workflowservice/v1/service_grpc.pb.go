@@ -145,6 +145,7 @@ const (
 	WorkflowService_PollWorkflowExecutionTimeSkipping_FullMethodName            = "/temporal.api.workflowservice.v1.WorkflowService/PollWorkflowExecutionTimeSkipping"
 	WorkflowService_AttachStreamCallback_FullMethodName                         = "/temporal.api.workflowservice.v1.WorkflowService/AttachStreamCallback"
 	WorkflowService_DetachStreamCallback_FullMethodName                         = "/temporal.api.workflowservice.v1.WorkflowService/DetachStreamCallback"
+	WorkflowService_WaitStreamCallback_FullMethodName                           = "/temporal.api.workflowservice.v1.WorkflowService/WaitStreamCallback"
 	WorkflowService_NotifyStream_FullMethodName                                 = "/temporal.api.workflowservice.v1.WorkflowService/NotifyStream"
 	WorkflowService_DescribeStreamNotifier_FullMethodName                       = "/temporal.api.workflowservice.v1.WorkflowService/DescribeStreamNotifier"
 	WorkflowService_PollStreamNotifier_FullMethodName                           = "/temporal.api.workflowservice.v1.WorkflowService/PollStreamNotifier"
@@ -900,6 +901,17 @@ type WorkflowServiceClient interface {
 	//
 	//	aip.dev/not-precedent: SDKs reach the stream notifier through System Nexus or gRPC. --)
 	DetachStreamCallback(ctx context.Context, in *DetachStreamCallbackRequest, opts ...grpc.CallOption) (*DetachStreamCallbackResponse, error)
+	// WaitStreamCallback asks the notifier of a stream to wake one idle callback once, when the
+	// notifier's counter passes `after_counter`. If it passed already, the wake goes out at once.
+	// After the delivery the callback is idle again. A reader calls it when a read finds nothing.
+	// The handler of a stream operation calls it for its caller, and a Workflow reader's Worker
+	// for its `workflow_target`. So a busy stream that the reader keeps up with sends the reader
+	// nothing. Waiting on a callback that is not idle changes nothing.
+	//
+	// (-- api-linter: core::0127::http-annotation=disabled
+	//
+	//	aip.dev/not-precedent: SDKs reach the stream notifier through System Nexus or gRPC. --)
+	WaitStreamCallback(ctx context.Context, in *WaitStreamCallbackRequest, opts ...grpc.CallOption) (*WaitStreamCallbackResponse, error)
 	// NotifyStream tells the notifier of a stream that the stream moved, or that it closed. The
 	// notifier passes the latest notification on to every attached callback as progress, and on close
 	// completes them. Producers fold their notifications and keep at most one call in flight.
@@ -2201,6 +2213,16 @@ func (c *workflowServiceClient) DetachStreamCallback(ctx context.Context, in *De
 	return out, nil
 }
 
+func (c *workflowServiceClient) WaitStreamCallback(ctx context.Context, in *WaitStreamCallbackRequest, opts ...grpc.CallOption) (*WaitStreamCallbackResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(WaitStreamCallbackResponse)
+	err := c.cc.Invoke(ctx, WorkflowService_WaitStreamCallback_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *workflowServiceClient) NotifyStream(ctx context.Context, in *NotifyStreamRequest, opts ...grpc.CallOption) (*NotifyStreamResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(NotifyStreamResponse)
@@ -2990,6 +3012,17 @@ type WorkflowServiceServer interface {
 	//
 	//	aip.dev/not-precedent: SDKs reach the stream notifier through System Nexus or gRPC. --)
 	DetachStreamCallback(context.Context, *DetachStreamCallbackRequest) (*DetachStreamCallbackResponse, error)
+	// WaitStreamCallback asks the notifier of a stream to wake one idle callback once, when the
+	// notifier's counter passes `after_counter`. If it passed already, the wake goes out at once.
+	// After the delivery the callback is idle again. A reader calls it when a read finds nothing.
+	// The handler of a stream operation calls it for its caller, and a Workflow reader's Worker
+	// for its `workflow_target`. So a busy stream that the reader keeps up with sends the reader
+	// nothing. Waiting on a callback that is not idle changes nothing.
+	//
+	// (-- api-linter: core::0127::http-annotation=disabled
+	//
+	//	aip.dev/not-precedent: SDKs reach the stream notifier through System Nexus or gRPC. --)
+	WaitStreamCallback(context.Context, *WaitStreamCallbackRequest) (*WaitStreamCallbackResponse, error)
 	// NotifyStream tells the notifier of a stream that the stream moved, or that it closed. The
 	// notifier passes the latest notification on to every attached callback as progress, and on close
 	// completes them. Producers fold their notifications and keep at most one call in flight.
@@ -3415,6 +3448,9 @@ func (UnimplementedWorkflowServiceServer) AttachStreamCallback(context.Context, 
 }
 func (UnimplementedWorkflowServiceServer) DetachStreamCallback(context.Context, *DetachStreamCallbackRequest) (*DetachStreamCallbackResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method DetachStreamCallback not implemented")
+}
+func (UnimplementedWorkflowServiceServer) WaitStreamCallback(context.Context, *WaitStreamCallbackRequest) (*WaitStreamCallbackResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method WaitStreamCallback not implemented")
 }
 func (UnimplementedWorkflowServiceServer) NotifyStream(context.Context, *NotifyStreamRequest) (*NotifyStreamResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method NotifyStream not implemented")
@@ -5699,6 +5735,24 @@ func _WorkflowService_DetachStreamCallback_Handler(srv interface{}, ctx context.
 	return interceptor(ctx, in, info, handler)
 }
 
+func _WorkflowService_WaitStreamCallback_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(WaitStreamCallbackRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(WorkflowServiceServer).WaitStreamCallback(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: WorkflowService_WaitStreamCallback_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(WorkflowServiceServer).WaitStreamCallback(ctx, req.(*WaitStreamCallbackRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _WorkflowService_NotifyStream_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(NotifyStreamRequest)
 	if err := dec(in); err != nil {
@@ -6277,6 +6331,10 @@ var WorkflowService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DetachStreamCallback",
 			Handler:    _WorkflowService_DetachStreamCallback_Handler,
+		},
+		{
+			MethodName: "WaitStreamCallback",
+			Handler:    _WorkflowService_WaitStreamCallback_Handler,
 		},
 		{
 			MethodName: "NotifyStream",
