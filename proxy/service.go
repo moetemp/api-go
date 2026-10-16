@@ -547,3 +547,7 @@ func (s *workflowServiceProxyServer) UpdateWorkflowExecutionOptions(ctx context.
 func (s *workflowServiceProxyServer) ValidateWorkerDeploymentVersionComputeConfig(ctx context.Context, in0 *workflowservice.ValidateWorkerDeploymentVersionComputeConfigRequest) (*workflowservice.ValidateWorkerDeploymentVersionComputeConfigResponse, error) {
 	return s.client.ValidateWorkerDeploymentVersionComputeConfig(s.reqCtx(ctx), in0)
 }
+
+func (s *workflowServiceProxyServer) WaitStreamCallback(ctx context.Context, in0 *workflowservice.WaitStreamCallbackRequest) (*workflowservice.WaitStreamCallbackResponse, error) {
+	return s.client.WaitStreamCallback(s.reqCtx(ctx), in0)
+}

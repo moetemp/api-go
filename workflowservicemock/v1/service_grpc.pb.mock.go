@@ -2616,6 +2616,26 @@ func (mr *MockWorkflowServiceClientMockRecorder) ValidateWorkerDeploymentVersion
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ValidateWorkerDeploymentVersionComputeConfig", reflect.TypeOf((*MockWorkflowServiceClient)(nil).ValidateWorkerDeploymentVersionComputeConfig), varargs...)
 }
 
+// WaitStreamCallback mocks base method.
+func (m *MockWorkflowServiceClient) WaitStreamCallback(ctx context.Context, in *workflowservice.WaitStreamCallbackRequest, opts ...grpc.CallOption) (*workflowservice.WaitStreamCallbackResponse, error) {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{ctx, in}
+	for _, a := range opts {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "WaitStreamCallback", varargs...)
+	ret0, _ := ret[0].(*workflowservice.WaitStreamCallbackResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// WaitStreamCallback indicates an expected call of WaitStreamCallback.
+func (mr *MockWorkflowServiceClientMockRecorder) WaitStreamCallback(ctx, in interface{}, opts ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{ctx, in}, opts...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WaitStreamCallback", reflect.TypeOf((*MockWorkflowServiceClient)(nil).WaitStreamCallback), varargs...)
+}
+
 // MockWorkflowServiceServer is a mock of WorkflowServiceServer interface.
 type MockWorkflowServiceServer struct {
 	workflowservice.UnimplementedWorkflowServiceServer
@@ -4575,6 +4595,21 @@ func (m *MockWorkflowServiceServer) ValidateWorkerDeploymentVersionComputeConfig
 func (mr *MockWorkflowServiceServerMockRecorder) ValidateWorkerDeploymentVersionComputeConfig(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ValidateWorkerDeploymentVersionComputeConfig", reflect.TypeOf((*MockWorkflowServiceServer)(nil).ValidateWorkerDeploymentVersionComputeConfig), arg0, arg1)
+}
+
+// WaitStreamCallback mocks base method.
+func (m *MockWorkflowServiceServer) WaitStreamCallback(arg0 context.Context, arg1 *workflowservice.WaitStreamCallbackRequest) (*workflowservice.WaitStreamCallbackResponse, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "WaitStreamCallback", arg0, arg1)
+	ret0, _ := ret[0].(*workflowservice.WaitStreamCallbackResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// WaitStreamCallback indicates an expected call of WaitStreamCallback.
+func (mr *MockWorkflowServiceServerMockRecorder) WaitStreamCallback(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "WaitStreamCallback", reflect.TypeOf((*MockWorkflowServiceServer)(nil).WaitStreamCallback), arg0, arg1)
 }
 
 // mustEmbedUnimplementedWorkflowServiceServer mocks base method.
