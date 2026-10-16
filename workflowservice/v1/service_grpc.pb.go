@@ -904,9 +904,10 @@ type WorkflowServiceClient interface {
 	DetachStreamCallback(ctx context.Context, in *DetachStreamCallbackRequest, opts ...grpc.CallOption) (*DetachStreamCallbackResponse, error)
 	// WaitStreamCallback asks the notifier of a stream to wake one idle callback once, when the
 	// notifier's counter passes `after_counter`. If it passed already, the wake goes out at once.
-	// After the delivery the callback is idle again. The handler of a stream operation calls it
-	// for its caller when a read finds nothing, so a busy stream that the caller keeps up with
-	// sends the caller nothing. Waiting on a callback that is not idle changes nothing.
+	// After the delivery the callback is idle again. A reader calls it when a read finds nothing.
+	// The handler of a stream operation calls it for its caller, and a Workflow reader's Worker
+	// for its `workflow_target`. So a busy stream that the reader keeps up with sends the reader
+	// nothing. Waiting on a callback that is not idle changes nothing.
 	//
 	// (-- api-linter: core::0127::http-annotation=disabled
 	//
@@ -3037,9 +3038,10 @@ type WorkflowServiceServer interface {
 	DetachStreamCallback(context.Context, *DetachStreamCallbackRequest) (*DetachStreamCallbackResponse, error)
 	// WaitStreamCallback asks the notifier of a stream to wake one idle callback once, when the
 	// notifier's counter passes `after_counter`. If it passed already, the wake goes out at once.
-	// After the delivery the callback is idle again. The handler of a stream operation calls it
-	// for its caller when a read finds nothing, so a busy stream that the caller keeps up with
-	// sends the caller nothing. Waiting on a callback that is not idle changes nothing.
+	// After the delivery the callback is idle again. A reader calls it when a read finds nothing.
+	// The handler of a stream operation calls it for its caller, and a Workflow reader's Worker
+	// for its `workflow_target`. So a busy stream that the reader keeps up with sends the reader
+	// nothing. Waiting on a callback that is not idle changes nothing.
 	//
 	// (-- api-linter: core::0127::http-annotation=disabled
 	//

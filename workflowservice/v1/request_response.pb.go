@@ -19315,9 +19315,10 @@ type AttachStreamCallbackRequest struct {
 	// Workflow gets each change of the stream as a `StreamWake` on its next Workflow Task. Exactly
 	// one of `callback` and `workflow_target` is set.
 	WorkflowTarget *v124.WorkflowWakeTarget `protobuf:"bytes,8,opt,name=workflow_target,json=workflowTarget,proto3" json:"workflow_target,omitempty"`
-	// Attaches the Nexus callback idle. An idle callback gets no progress until
-	// WaitStreamCallback asks for one wake, and it goes back to idle after that delivery. It still
-	// gets the completion when the stream closes. Not allowed with `workflow_target`.
+	// Attaches the callback idle. An idle callback gets no progress until WaitStreamCallback asks
+	// for one wake, and it goes back to idle after that delivery. It still gets the completion
+	// when the stream closes. A Workflow reader attaches its `workflow_target` idle, so a busy
+	// reader gets no wake.
 	Idle          bool `protobuf:"varint,9,opt,name=idle,proto3" json:"idle,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
