@@ -189,3 +189,40 @@ func (this *StreamNotification) Equal(that interface{}) bool {
 
 	return proto.Equal(this, that1)
 }
+
+// Marshal an object of type StreamNotificationResult to the protobuf v3 wire format
+func (val *StreamNotificationResult) Marshal() ([]byte, error) {
+	return proto.Marshal(val)
+}
+
+// Unmarshal an object of type StreamNotificationResult from the protobuf v3 wire format
+func (val *StreamNotificationResult) Unmarshal(buf []byte) error {
+	return proto.Unmarshal(buf, val)
+}
+
+// Size returns the size of the object, in bytes, once serialized
+func (val *StreamNotificationResult) Size() int {
+	return proto.Size(val)
+}
+
+// Equal returns whether two StreamNotificationResult values are equivalent by recursively
+// comparing the message's fields.
+// For more information see the documentation for
+// https://pkg.go.dev/google.golang.org/protobuf/proto#Equal
+func (this *StreamNotificationResult) Equal(that interface{}) bool {
+	if that == nil {
+		return this == nil
+	}
+
+	var that1 *StreamNotificationResult
+	switch t := that.(type) {
+	case *StreamNotificationResult:
+		that1 = t
+	case StreamNotificationResult:
+		that1 = &t
+	default:
+		return false
+	}
+
+	return proto.Equal(this, that1)
+}
