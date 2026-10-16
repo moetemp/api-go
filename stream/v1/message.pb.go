@@ -498,6 +498,62 @@ func (x *StreamNotification) GetMetadata() map[string]string {
 	return nil
 }
 
+// The answer to one entry of a NotifyStreams request.
+type StreamNotificationResult struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// The gRPC status code of the entry, as a NotifyStream call for it would answer. Zero (OK)
+	// when the server applied the entry, or dropped it since the stream has no notifier.
+	Code int32 `protobuf:"varint,1,opt,name=code,proto3" json:"code,omitempty"`
+	// Why the server refused the entry. Empty when `code` is zero.
+	Message       string `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *StreamNotificationResult) Reset() {
+	*x = StreamNotificationResult{}
+	mi := &file_temporal_api_stream_v1_message_proto_msgTypes[5]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *StreamNotificationResult) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*StreamNotificationResult) ProtoMessage() {}
+
+func (x *StreamNotificationResult) ProtoReflect() protoreflect.Message {
+	mi := &file_temporal_api_stream_v1_message_proto_msgTypes[5]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use StreamNotificationResult.ProtoReflect.Descriptor instead.
+func (*StreamNotificationResult) Descriptor() ([]byte, []int) {
+	return file_temporal_api_stream_v1_message_proto_rawDescGZIP(), []int{5}
+}
+
+func (x *StreamNotificationResult) GetCode() int32 {
+	if x != nil {
+		return x.Code
+	}
+	return 0
+}
+
+func (x *StreamNotificationResult) GetMessage() string {
+	if x != nil {
+		return x.Message
+	}
+	return ""
+}
+
 var File_temporal_api_stream_v1_message_proto protoreflect.FileDescriptor
 
 const file_temporal_api_stream_v1_message_proto_rawDesc = "" +
@@ -550,7 +606,10 @@ const file_temporal_api_stream_v1_message_proto_rawDesc = "" +
 	"\bmetadata\x18\x04 \x03(\v28.temporal.api.stream.v1.StreamNotification.MetadataEntryR\bmetadata\x1a;\n" +
 	"\rMetadataEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
-	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01B\x89\x01\n" +
+	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"H\n" +
+	"\x18StreamNotificationResult\x12\x12\n" +
+	"\x04code\x18\x01 \x01(\x05R\x04code\x12\x18\n" +
+	"\amessage\x18\x02 \x01(\tR\amessageB\x89\x01\n" +
 	"\x19io.temporal.api.stream.v1B\fMessageProtoP\x01Z#go.temporal.io/api/stream/v1;stream\xaa\x02\x18Temporalio.Api.Stream.V1\xea\x02\x1bTemporalio::Api::Stream::V1b\x06proto3"
 
 var (
@@ -565,34 +624,35 @@ func file_temporal_api_stream_v1_message_proto_rawDescGZIP() []byte {
 	return file_temporal_api_stream_v1_message_proto_rawDescData
 }
 
-var file_temporal_api_stream_v1_message_proto_msgTypes = make([]protoimpl.MessageInfo, 7)
+var file_temporal_api_stream_v1_message_proto_msgTypes = make([]protoimpl.MessageInfo, 8)
 var file_temporal_api_stream_v1_message_proto_goTypes = []any{
-	(*StreamReference)(nil),       // 0: temporal.api.stream.v1.StreamReference
-	(*StreamCallbackInfo)(nil),    // 1: temporal.api.stream.v1.StreamCallbackInfo
-	(*WorkflowWakeTarget)(nil),    // 2: temporal.api.stream.v1.WorkflowWakeTarget
-	(*StreamWake)(nil),            // 3: temporal.api.stream.v1.StreamWake
-	(*StreamNotification)(nil),    // 4: temporal.api.stream.v1.StreamNotification
-	nil,                           // 5: temporal.api.stream.v1.StreamWake.MetadataEntry
-	nil,                           // 6: temporal.api.stream.v1.StreamNotification.MetadataEntry
-	(v1.StreamOwnerKind)(0),       // 7: temporal.api.enums.v1.StreamOwnerKind
-	(*v11.Callback)(nil),          // 8: temporal.api.common.v1.Callback
-	(v1.CallbackState)(0),         // 9: temporal.api.enums.v1.CallbackState
-	(*timestamppb.Timestamp)(nil), // 10: google.protobuf.Timestamp
-	(*v12.Failure)(nil),           // 11: temporal.api.failure.v1.Failure
-	(*v11.Payload)(nil),           // 12: temporal.api.common.v1.Payload
+	(*StreamReference)(nil),          // 0: temporal.api.stream.v1.StreamReference
+	(*StreamCallbackInfo)(nil),       // 1: temporal.api.stream.v1.StreamCallbackInfo
+	(*WorkflowWakeTarget)(nil),       // 2: temporal.api.stream.v1.WorkflowWakeTarget
+	(*StreamWake)(nil),               // 3: temporal.api.stream.v1.StreamWake
+	(*StreamNotification)(nil),       // 4: temporal.api.stream.v1.StreamNotification
+	(*StreamNotificationResult)(nil), // 5: temporal.api.stream.v1.StreamNotificationResult
+	nil,                              // 6: temporal.api.stream.v1.StreamWake.MetadataEntry
+	nil,                              // 7: temporal.api.stream.v1.StreamNotification.MetadataEntry
+	(v1.StreamOwnerKind)(0),          // 8: temporal.api.enums.v1.StreamOwnerKind
+	(*v11.Callback)(nil),             // 9: temporal.api.common.v1.Callback
+	(v1.CallbackState)(0),            // 10: temporal.api.enums.v1.CallbackState
+	(*timestamppb.Timestamp)(nil),    // 11: google.protobuf.Timestamp
+	(*v12.Failure)(nil),              // 12: temporal.api.failure.v1.Failure
+	(*v11.Payload)(nil),              // 13: temporal.api.common.v1.Payload
 }
 var file_temporal_api_stream_v1_message_proto_depIdxs = []int32{
-	7,  // 0: temporal.api.stream.v1.StreamReference.owner_kind:type_name -> temporal.api.enums.v1.StreamOwnerKind
-	8,  // 1: temporal.api.stream.v1.StreamCallbackInfo.callback:type_name -> temporal.api.common.v1.Callback
-	9,  // 2: temporal.api.stream.v1.StreamCallbackInfo.state:type_name -> temporal.api.enums.v1.CallbackState
-	10, // 3: temporal.api.stream.v1.StreamCallbackInfo.last_attempt_complete_time:type_name -> google.protobuf.Timestamp
-	11, // 4: temporal.api.stream.v1.StreamCallbackInfo.last_attempt_failure:type_name -> temporal.api.failure.v1.Failure
+	8,  // 0: temporal.api.stream.v1.StreamReference.owner_kind:type_name -> temporal.api.enums.v1.StreamOwnerKind
+	9,  // 1: temporal.api.stream.v1.StreamCallbackInfo.callback:type_name -> temporal.api.common.v1.Callback
+	10, // 2: temporal.api.stream.v1.StreamCallbackInfo.state:type_name -> temporal.api.enums.v1.CallbackState
+	11, // 3: temporal.api.stream.v1.StreamCallbackInfo.last_attempt_complete_time:type_name -> google.protobuf.Timestamp
+	12, // 4: temporal.api.stream.v1.StreamCallbackInfo.last_attempt_failure:type_name -> temporal.api.failure.v1.Failure
 	2,  // 5: temporal.api.stream.v1.StreamCallbackInfo.workflow_target:type_name -> temporal.api.stream.v1.WorkflowWakeTarget
-	5,  // 6: temporal.api.stream.v1.StreamWake.metadata:type_name -> temporal.api.stream.v1.StreamWake.MetadataEntry
-	12, // 7: temporal.api.stream.v1.StreamWake.close_result:type_name -> temporal.api.common.v1.Payload
-	11, // 8: temporal.api.stream.v1.StreamWake.close_failure:type_name -> temporal.api.failure.v1.Failure
+	6,  // 6: temporal.api.stream.v1.StreamWake.metadata:type_name -> temporal.api.stream.v1.StreamWake.MetadataEntry
+	13, // 7: temporal.api.stream.v1.StreamWake.close_result:type_name -> temporal.api.common.v1.Payload
+	12, // 8: temporal.api.stream.v1.StreamWake.close_failure:type_name -> temporal.api.failure.v1.Failure
 	0,  // 9: temporal.api.stream.v1.StreamNotification.stream_ref:type_name -> temporal.api.stream.v1.StreamReference
-	6,  // 10: temporal.api.stream.v1.StreamNotification.metadata:type_name -> temporal.api.stream.v1.StreamNotification.MetadataEntry
+	7,  // 10: temporal.api.stream.v1.StreamNotification.metadata:type_name -> temporal.api.stream.v1.StreamNotification.MetadataEntry
 	11, // [11:11] is the sub-list for method output_type
 	11, // [11:11] is the sub-list for method input_type
 	11, // [11:11] is the sub-list for extension type_name
@@ -611,7 +671,7 @@ func file_temporal_api_stream_v1_message_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_temporal_api_stream_v1_message_proto_rawDesc), len(file_temporal_api_stream_v1_message_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   7,
+			NumMessages:   8,
 			NumExtensions: 0,
 			NumServices:   0,
 		},
