@@ -9,3 +9,9 @@
 *.mock.go linguist-generated
 internal/protojson/** linguist-vendored
 internal/strcase/** linguist-vendored
+
+proxy/interceptor.go linguist-generated=true
+proxy/service.go linguist-generated=true
+temporalproto/openapi/*.go linguist-generated=true
+# Copied from the api repo by the regen.
+systemnexus/**/*.wit linguist-generated=true
