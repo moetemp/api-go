@@ -2895,7 +2895,7 @@ func visitPayloads(
 				options,
 				o,
 				concState,
-				o.GetStreamWakes(),
+				o.GetAttachments(),
 			); err != nil {
 				return err
 			}
@@ -3700,13 +3700,6 @@ func visitPayloads(
 			}
 
 			ctx.Context = prevCtx
-
-		case []*stream.StreamWake:
-			for _, x := range o {
-				if err := visitPayloads(ctx, options, parent, concState, x); err != nil {
-					return err
-				}
-			}
 
 		case *stream.StreamWake:
 
@@ -6871,7 +6864,7 @@ func visitFailures(ctx *VisitFailuresContext, options *VisitFailuresOptions, obj
 			if err := visitFailures(
 				ctx,
 				options,
-				o.GetStreamWakes(),
+				o.GetAttachments(),
 			); err != nil {
 				return err
 			}
@@ -7020,13 +7013,6 @@ func visitFailures(ctx *VisitFailuresContext, options *VisitFailuresOptions, obj
 				o.GetLastAttemptFailure(),
 			); err != nil {
 				return err
-			}
-
-		case []*stream.StreamWake:
-			for _, x := range o {
-				if err := visitFailures(ctx, options, x); err != nil {
-					return err
-				}
 			}
 
 		case *stream.StreamWake:
