@@ -16,13 +16,13 @@ import (
 	v12 "go.temporal.io/api/enums/v1"
 	v13 "go.temporal.io/api/failure/v1"
 	v16 "go.temporal.io/api/nexus/v1"
-	v18 "go.temporal.io/api/sdk/v1"
-	v17 "go.temporal.io/api/stream/v1"
+	v17 "go.temporal.io/api/sdk/v1"
 	v11 "go.temporal.io/api/taskqueue/v1"
-	v19 "go.temporal.io/api/update/v1"
+	v18 "go.temporal.io/api/update/v1"
 	v14 "go.temporal.io/api/workflow/v1"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
+	anypb "google.golang.org/protobuf/types/known/anypb"
 	durationpb "google.golang.org/protobuf/types/known/durationpb"
 	timestamppb "google.golang.org/protobuf/types/known/timestamppb"
 )
@@ -991,12 +991,14 @@ type WorkflowTaskScheduledEventAttributes struct {
 	StartToCloseTimeout *durationpb.Duration `protobuf:"bytes,2,opt,name=start_to_close_timeout,json=startToCloseTimeout,proto3" json:"start_to_close_timeout,omitempty"`
 	// Starting at 1, how many attempts there have been to complete this task
 	Attempt int32 `protobuf:"varint,3,opt,name=attempt,proto3" json:"attempt,omitempty"`
-	// Wakes for the Workflow's stream readers that arrived since the previous Workflow Task was
-	// scheduled, at most one entry per reader: the latest one. Recorded here rather than as
-	// events of their own, so a burst of wakes costs one task and replay sees the same wakes the
-	// Workflow saw. Bounded by `history.maximumStreamWakeSources` readers per execution, and it
-	// counts toward the History size limit.
-	StreamWakes   []*v17.StreamWake `protobuf:"bytes,5,rep,name=stream_wakes,json=streamWakes,proto3" json:"stream_wakes,omitempty"`
+	// Data the server attaches to this task for the Workflow, such as wakes for its stream
+	// readers or progress of its Nexus operations. Opaque to the SDK core. Counts toward the
+	// History size limit.
+	//
+	// (-- api-linter: core::0146::any=disabled
+	//
+	//	aip.dev/not-precedent: attachments are meant to hold arbitrary server data. --)
+	Attachments   []*anypb.Any `protobuf:"bytes,4,rep,name=attachments,proto3" json:"attachments,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1052,9 +1054,9 @@ func (x *WorkflowTaskScheduledEventAttributes) GetAttempt() int32 {
 	return 0
 }
 
-func (x *WorkflowTaskScheduledEventAttributes) GetStreamWakes() []*v17.StreamWake {
+func (x *WorkflowTaskScheduledEventAttributes) GetAttachments() []*anypb.Any {
 	if x != nil {
-		return x.StreamWakes
+		return x.Attachments
 	}
 	return nil
 }
@@ -1217,7 +1219,7 @@ type WorkflowTaskCompletedEventAttributes struct {
 	WorkerVersion *v1.WorkerVersionStamp `protobuf:"bytes,5,opt,name=worker_version,json=workerVersion,proto3" json:"worker_version,omitempty"`
 	// Data the SDK wishes to record for itself, but server need not interpret, and does not
 	// directly impact workflow state.
-	SdkMetadata *v18.WorkflowTaskCompletedMetadata `protobuf:"bytes,6,opt,name=sdk_metadata,json=sdkMetadata,proto3" json:"sdk_metadata,omitempty"`
+	SdkMetadata *v17.WorkflowTaskCompletedMetadata `protobuf:"bytes,6,opt,name=sdk_metadata,json=sdkMetadata,proto3" json:"sdk_metadata,omitempty"`
 	// Local usage data sent during workflow task completion and recorded here for posterity
 	MeteringMetadata *v1.MeteringMetadata `protobuf:"bytes,13,opt,name=metering_metadata,json=meteringMetadata,proto3" json:"metering_metadata,omitempty"`
 	// The deployment that completed this task. May or may not be set for unversioned workers,
@@ -1314,7 +1316,7 @@ func (x *WorkflowTaskCompletedEventAttributes) GetWorkerVersion() *v1.WorkerVers
 	return nil
 }
 
-func (x *WorkflowTaskCompletedEventAttributes) GetSdkMetadata() *v18.WorkflowTaskCompletedMetadata {
+func (x *WorkflowTaskCompletedEventAttributes) GetSdkMetadata() *v17.WorkflowTaskCompletedMetadata {
 	if x != nil {
 		return x.SdkMetadata
 	}
@@ -4700,7 +4702,7 @@ type WorkflowExecutionUpdateAcceptedEventAttributes struct {
 	AcceptedRequestSequencingEventId int64 `protobuf:"varint,3,opt,name=accepted_request_sequencing_event_id,json=acceptedRequestSequencingEventId,proto3" json:"accepted_request_sequencing_event_id,omitempty"`
 	// The message payload of the original request message that initiated this
 	// update.
-	AcceptedRequest *v19.Request `protobuf:"bytes,4,opt,name=accepted_request,json=acceptedRequest,proto3" json:"accepted_request,omitempty"`
+	AcceptedRequest *v18.Request `protobuf:"bytes,4,opt,name=accepted_request,json=acceptedRequest,proto3" json:"accepted_request,omitempty"`
 	unknownFields   protoimpl.UnknownFields
 	sizeCache       protoimpl.SizeCache
 }
@@ -4756,7 +4758,7 @@ func (x *WorkflowExecutionUpdateAcceptedEventAttributes) GetAcceptedRequestSeque
 	return 0
 }
 
-func (x *WorkflowExecutionUpdateAcceptedEventAttributes) GetAcceptedRequest() *v19.Request {
+func (x *WorkflowExecutionUpdateAcceptedEventAttributes) GetAcceptedRequest() *v18.Request {
 	if x != nil {
 		return x.AcceptedRequest
 	}
@@ -4766,11 +4768,11 @@ func (x *WorkflowExecutionUpdateAcceptedEventAttributes) GetAcceptedRequest() *v
 type WorkflowExecutionUpdateCompletedEventAttributes struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// The metadata about this update.
-	Meta *v19.Meta `protobuf:"bytes,1,opt,name=meta,proto3" json:"meta,omitempty"`
+	Meta *v18.Meta `protobuf:"bytes,1,opt,name=meta,proto3" json:"meta,omitempty"`
 	// The event ID indicating the acceptance of this update.
 	AcceptedEventId int64 `protobuf:"varint,3,opt,name=accepted_event_id,json=acceptedEventId,proto3" json:"accepted_event_id,omitempty"`
 	// The outcome of executing the workflow update function.
-	Outcome       *v19.Outcome `protobuf:"bytes,2,opt,name=outcome,proto3" json:"outcome,omitempty"`
+	Outcome       *v18.Outcome `protobuf:"bytes,2,opt,name=outcome,proto3" json:"outcome,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -4805,7 +4807,7 @@ func (*WorkflowExecutionUpdateCompletedEventAttributes) Descriptor() ([]byte, []
 	return file_temporal_api_history_v1_message_proto_rawDescGZIP(), []int{46}
 }
 
-func (x *WorkflowExecutionUpdateCompletedEventAttributes) GetMeta() *v19.Meta {
+func (x *WorkflowExecutionUpdateCompletedEventAttributes) GetMeta() *v18.Meta {
 	if x != nil {
 		return x.Meta
 	}
@@ -4819,7 +4821,7 @@ func (x *WorkflowExecutionUpdateCompletedEventAttributes) GetAcceptedEventId() i
 	return 0
 }
 
-func (x *WorkflowExecutionUpdateCompletedEventAttributes) GetOutcome() *v19.Outcome {
+func (x *WorkflowExecutionUpdateCompletedEventAttributes) GetOutcome() *v18.Outcome {
 	if x != nil {
 		return x.Outcome
 	}
@@ -4838,7 +4840,7 @@ type WorkflowExecutionUpdateRejectedEventAttributes struct {
 	RejectedRequestSequencingEventId int64 `protobuf:"varint,3,opt,name=rejected_request_sequencing_event_id,json=rejectedRequestSequencingEventId,proto3" json:"rejected_request_sequencing_event_id,omitempty"`
 	// The message payload of the original request message that initiated this
 	// update.
-	RejectedRequest *v19.Request `protobuf:"bytes,4,opt,name=rejected_request,json=rejectedRequest,proto3" json:"rejected_request,omitempty"`
+	RejectedRequest *v18.Request `protobuf:"bytes,4,opt,name=rejected_request,json=rejectedRequest,proto3" json:"rejected_request,omitempty"`
 	// The cause of rejection.
 	Failure       *v13.Failure `protobuf:"bytes,5,opt,name=failure,proto3" json:"failure,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -4896,7 +4898,7 @@ func (x *WorkflowExecutionUpdateRejectedEventAttributes) GetRejectedRequestSeque
 	return 0
 }
 
-func (x *WorkflowExecutionUpdateRejectedEventAttributes) GetRejectedRequest() *v19.Request {
+func (x *WorkflowExecutionUpdateRejectedEventAttributes) GetRejectedRequest() *v18.Request {
 	if x != nil {
 		return x.RejectedRequest
 	}
@@ -4913,7 +4915,7 @@ func (x *WorkflowExecutionUpdateRejectedEventAttributes) GetFailure() *v13.Failu
 type WorkflowExecutionUpdateAdmittedEventAttributes struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// The update request associated with this event.
-	Request *v19.Request `protobuf:"bytes,1,opt,name=request,proto3" json:"request,omitempty"`
+	Request *v18.Request `protobuf:"bytes,1,opt,name=request,proto3" json:"request,omitempty"`
 	// An explanation of why this event was written to history.
 	Origin        v12.UpdateAdmittedEventOrigin `protobuf:"varint,2,opt,name=origin,proto3,enum=temporal.api.enums.v1.UpdateAdmittedEventOrigin" json:"origin,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -4950,7 +4952,7 @@ func (*WorkflowExecutionUpdateAdmittedEventAttributes) Descriptor() ([]byte, []i
 	return file_temporal_api_history_v1_message_proto_rawDescGZIP(), []int{48}
 }
 
-func (x *WorkflowExecutionUpdateAdmittedEventAttributes) GetRequest() *v19.Request {
+func (x *WorkflowExecutionUpdateAdmittedEventAttributes) GetRequest() *v18.Request {
 	if x != nil {
 		return x.Request
 	}
@@ -5880,13 +5882,13 @@ type HistoryEvent struct {
 	//   - workflow_execution_started_event_attributes - summary and details from start workflow.
 	//   - timer_started_event_attributes - summary represents an identifier for the timer for use by
 	//     user interfaces.
-	UserMetadata *v18.UserMetadata `protobuf:"bytes,301,opt,name=user_metadata,json=userMetadata,proto3" json:"user_metadata,omitempty"`
+	UserMetadata *v17.UserMetadata `protobuf:"bytes,301,opt,name=user_metadata,json=userMetadata,proto3" json:"user_metadata,omitempty"`
 	// Links to related entities, such as the entity that started this event's workflow.
 	Links []*v1.Link `protobuf:"bytes,302,rep,name=links,proto3" json:"links,omitempty"`
 	// Server-computed authenticated caller identity associated with this event.
 	Principal *v1.Principal `protobuf:"bytes,303,opt,name=principal,proto3" json:"principal,omitempty"`
 	// Event group markers attached to this event.
-	EventGroupMarkers []*v18.EventGroupMarker `protobuf:"bytes,304,rep,name=event_group_markers,json=eventGroupMarkers,proto3" json:"event_group_markers,omitempty"`
+	EventGroupMarkers []*v17.EventGroupMarker `protobuf:"bytes,304,rep,name=event_group_markers,json=eventGroupMarkers,proto3" json:"event_group_markers,omitempty"`
 	// The event details. The type must match that in `event_type`.
 	//
 	// Types that are valid to be assigned to Attributes:
@@ -6028,7 +6030,7 @@ func (x *HistoryEvent) GetWorkerMayIgnore() bool {
 	return false
 }
 
-func (x *HistoryEvent) GetUserMetadata() *v18.UserMetadata {
+func (x *HistoryEvent) GetUserMetadata() *v17.UserMetadata {
 	if x != nil {
 		return x.UserMetadata
 	}
@@ -6049,7 +6051,7 @@ func (x *HistoryEvent) GetPrincipal() *v1.Principal {
 	return nil
 }
 
-func (x *HistoryEvent) GetEventGroupMarkers() []*v18.EventGroupMarker {
+func (x *HistoryEvent) GetEventGroupMarkers() []*v17.EventGroupMarker {
 	if x != nil {
 		return x.EventGroupMarkers
 	}
@@ -7089,7 +7091,7 @@ var File_temporal_api_history_v1_message_proto protoreflect.FileDescriptor
 
 const file_temporal_api_history_v1_message_proto_rawDesc = "" +
 	"\n" +
-	"%temporal/api/history/v1/message.proto\x12\x17temporal.api.history.v1\x1a\x1egoogle/protobuf/duration.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a&temporal/api/enums/v1/event_type.proto\x1a(temporal/api/enums/v1/failed_cause.proto\x1a\"temporal/api/enums/v1/update.proto\x1a$temporal/api/enums/v1/workflow.proto\x1a$temporal/api/common/v1/message.proto\x1a(temporal/api/deployment/v1/message.proto\x1a%temporal/api/failure/v1/message.proto\x1a#temporal/api/nexus/v1/message.proto\x1a'temporal/api/taskqueue/v1/message.proto\x1a$temporal/api/update/v1/message.proto\x1a&temporal/api/workflow/v1/message.proto\x1a0temporal/api/sdk/v1/task_complete_metadata.proto\x1a'temporal/api/sdk/v1/user_metadata.proto\x1a,temporal/api/sdk/v1/event_group_marker.proto\x1a$temporal/api/stream/v1/message.proto\"\x9e\x1a\n" +
+	"%temporal/api/history/v1/message.proto\x12\x17temporal.api.history.v1\x1a\x19google/protobuf/any.proto\x1a\x1egoogle/protobuf/duration.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a&temporal/api/enums/v1/event_type.proto\x1a(temporal/api/enums/v1/failed_cause.proto\x1a\"temporal/api/enums/v1/update.proto\x1a$temporal/api/enums/v1/workflow.proto\x1a$temporal/api/common/v1/message.proto\x1a(temporal/api/deployment/v1/message.proto\x1a%temporal/api/failure/v1/message.proto\x1a#temporal/api/nexus/v1/message.proto\x1a'temporal/api/taskqueue/v1/message.proto\x1a$temporal/api/update/v1/message.proto\x1a&temporal/api/workflow/v1/message.proto\x1a0temporal/api/sdk/v1/task_complete_metadata.proto\x1a'temporal/api/sdk/v1/user_metadata.proto\x1a,temporal/api/sdk/v1/event_group_marker.proto\"\x9e\x1a\n" +
 	"'WorkflowExecutionStartedEventAttributes\x12I\n" +
 	"\rworkflow_type\x18\x01 \x01(\v2$.temporal.api.common.v1.WorkflowTypeR\fworkflowType\x12:\n" +
 	"\x19parent_workflow_namespace\x18\x02 \x01(\tR\x17parentWorkflowNamespace\x12?\n" +
@@ -7171,13 +7173,13 @@ const file_temporal_api_history_v1_message_proto_rawDesc = "" +
 	"\x04memo\x18\r \x01(\v2\x1c.temporal.api.common.v1.MemoR\x04memo\x12U\n" +
 	"\x11search_attributes\x18\x0e \x01(\v2(.temporal.api.common.v1.SearchAttributesR\x10searchAttributes\x12,\n" +
 	"\x10inherit_build_id\x18\x0f \x01(\bB\x02\x18\x01R\x0einheritBuildId\x12v\n" +
-	"\x1binitial_versioning_behavior\x18\x10 \x01(\x0e26.temporal.api.enums.v1.ContinueAsNewVersioningBehaviorR\x19initialVersioningBehavior\"\x9c\x02\n" +
+	"\x1binitial_versioning_behavior\x18\x10 \x01(\x0e26.temporal.api.enums.v1.ContinueAsNewVersioningBehaviorR\x19initialVersioningBehavior\"\x8d\x02\n" +
 	"$WorkflowTaskScheduledEventAttributes\x12C\n" +
 	"\n" +
 	"task_queue\x18\x01 \x01(\v2$.temporal.api.taskqueue.v1.TaskQueueR\ttaskQueue\x12N\n" +
 	"\x16start_to_close_timeout\x18\x02 \x01(\v2\x19.google.protobuf.DurationR\x13startToCloseTimeout\x12\x18\n" +
-	"\aattempt\x18\x03 \x01(\x05R\aattempt\x12E\n" +
-	"\fstream_wakes\x18\x05 \x03(\v2\".temporal.api.stream.v1.StreamWakeR\vstreamWakes\"\xd9\x04\n" +
+	"\aattempt\x18\x03 \x01(\x05R\aattempt\x126\n" +
+	"\vattachments\x18\x04 \x03(\v2\x14.google.protobuf.AnyR\vattachments\"\xd9\x04\n" +
 	"\"WorkflowTaskStartedEventAttributes\x12,\n" +
 	"\x12scheduled_event_id\x18\x01 \x01(\x03R\x10scheduledEventId\x12\x1a\n" +
 	"\bidentity\x18\x02 \x01(\tR\bidentity\x12\x1d\n" +
@@ -7757,9 +7759,9 @@ var file_temporal_api_history_v1_message_proto_goTypes = []any{
 	(*v16.PropagatedSerializationContext)(nil),          // 87: temporal.api.nexus.v1.PropagatedSerializationContext
 	(v12.RetryState)(0),                                 // 88: temporal.api.enums.v1.RetryState
 	(v12.ContinueAsNewVersioningBehavior)(0),            // 89: temporal.api.enums.v1.ContinueAsNewVersioningBehavior
-	(*v17.StreamWake)(nil),                              // 90: temporal.api.stream.v1.StreamWake
+	(*anypb.Any)(nil),                                   // 90: google.protobuf.Any
 	(v12.SuggestContinueAsNewReason)(0),                 // 91: temporal.api.enums.v1.SuggestContinueAsNewReason
-	(*v18.WorkflowTaskCompletedMetadata)(nil),           // 92: temporal.api.sdk.v1.WorkflowTaskCompletedMetadata
+	(*v17.WorkflowTaskCompletedMetadata)(nil),           // 92: temporal.api.sdk.v1.WorkflowTaskCompletedMetadata
 	(*v1.MeteringMetadata)(nil),                         // 93: temporal.api.common.v1.MeteringMetadata
 	(*v15.Deployment)(nil),                              // 94: temporal.api.deployment.v1.Deployment
 	(v12.VersioningBehavior)(0),                         // 95: temporal.api.enums.v1.VersioningBehavior
@@ -7772,16 +7774,16 @@ var file_temporal_api_history_v1_message_proto_goTypes = []any{
 	(v12.ParentClosePolicy)(0),                          // 102: temporal.api.enums.v1.ParentClosePolicy
 	(v12.WorkflowIdReusePolicy)(0),                      // 103: temporal.api.enums.v1.WorkflowIdReusePolicy
 	(v12.StartChildWorkflowExecutionFailedCause)(0),     // 104: temporal.api.enums.v1.StartChildWorkflowExecutionFailedCause
-	(*v19.Request)(nil),                                 // 105: temporal.api.update.v1.Request
-	(*v19.Meta)(nil),                                    // 106: temporal.api.update.v1.Meta
-	(*v19.Outcome)(nil),                                 // 107: temporal.api.update.v1.Outcome
+	(*v18.Request)(nil),                                 // 105: temporal.api.update.v1.Request
+	(*v18.Meta)(nil),                                    // 106: temporal.api.update.v1.Meta
+	(*v18.Outcome)(nil),                                 // 107: temporal.api.update.v1.Outcome
 	(v12.UpdateAdmittedEventOrigin)(0),                  // 108: temporal.api.enums.v1.UpdateAdmittedEventOrigin
 	(*v1.Payload)(nil),                                  // 109: temporal.api.common.v1.Payload
 	(v12.EventType)(0),                                  // 110: temporal.api.enums.v1.EventType
-	(*v18.UserMetadata)(nil),                            // 111: temporal.api.sdk.v1.UserMetadata
+	(*v17.UserMetadata)(nil),                            // 111: temporal.api.sdk.v1.UserMetadata
 	(*v1.Link)(nil),                                     // 112: temporal.api.common.v1.Link
 	(*v1.Principal)(nil),                                // 113: temporal.api.common.v1.Principal
-	(*v18.EventGroupMarker)(nil),                        // 114: temporal.api.sdk.v1.EventGroupMarker
+	(*v17.EventGroupMarker)(nil),                        // 114: temporal.api.sdk.v1.EventGroupMarker
 }
 var file_temporal_api_history_v1_message_proto_depIdxs = []int32{
 	66,  // 0: temporal.api.history.v1.WorkflowExecutionStartedEventAttributes.workflow_type:type_name -> temporal.api.common.v1.WorkflowType
@@ -7832,7 +7834,7 @@ var file_temporal_api_history_v1_message_proto_depIdxs = []int32{
 	89,  // 45: temporal.api.history.v1.WorkflowExecutionContinuedAsNewEventAttributes.initial_versioning_behavior:type_name -> temporal.api.enums.v1.ContinueAsNewVersioningBehavior
 	68,  // 46: temporal.api.history.v1.WorkflowTaskScheduledEventAttributes.task_queue:type_name -> temporal.api.taskqueue.v1.TaskQueue
 	70,  // 47: temporal.api.history.v1.WorkflowTaskScheduledEventAttributes.start_to_close_timeout:type_name -> google.protobuf.Duration
-	90,  // 48: temporal.api.history.v1.WorkflowTaskScheduledEventAttributes.stream_wakes:type_name -> temporal.api.stream.v1.StreamWake
+	90,  // 48: temporal.api.history.v1.WorkflowTaskScheduledEventAttributes.attachments:type_name -> google.protobuf.Any
 	91,  // 49: temporal.api.history.v1.WorkflowTaskStartedEventAttributes.suggest_continue_as_new_reasons:type_name -> temporal.api.enums.v1.SuggestContinueAsNewReason
 	79,  // 50: temporal.api.history.v1.WorkflowTaskStartedEventAttributes.worker_version:type_name -> temporal.api.common.v1.WorkerVersionStamp
 	79,  // 51: temporal.api.history.v1.WorkflowTaskCompletedEventAttributes.worker_version:type_name -> temporal.api.common.v1.WorkerVersionStamp
