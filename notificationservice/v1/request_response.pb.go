@@ -13,7 +13,6 @@ import (
 
 	v1 "go.temporal.io/api/common/v1"
 	v11 "go.temporal.io/api/failure/v1"
-	v12 "go.temporal.io/api/nexus/v1"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 )
@@ -174,163 +173,18 @@ func (*OnCompleteResponse) Descriptor() ([]byte, []int) {
 	return file_temporal_api_notificationservice_v1_request_response_proto_rawDescGZIP(), []int{1}
 }
 
-// OnProgressRequest is the request type to the NotificationService's OnProgress operation, which
-// receives the non-terminal progress of the source operation. It may be delivered any number of
-// times before the single OnComplete, in any order, so a handler keeps the highest counter.
-//
-// Information about the source operation is available the same way as for OnCompleteRequest.
-type OnProgressRequest struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
-	// The progress of the source operation. `progress.operation` is not set.
-	Progress *v12.NexusOperationProgress `protobuf:"bytes,1,opt,name=progress,proto3" json:"progress,omitempty"`
-	// User-supplied data which was added to the source invocation. (As applicable.)
-	SourceContext *v1.Payload `protobuf:"bytes,2,opt,name=source_context,json=sourceContext,proto3" json:"source_context,omitempty"`
-	// The handler token of the source operation, when the source is a standalone Nexus operation
-	// that has started. Empty otherwise.
-	OperationToken string `protobuf:"bytes,3,opt,name=operation_token,json=operationToken,proto3" json:"operation_token,omitempty"`
-	// The `receiver_state` of the last OnProgressResponse that the server accepted for this
-	// callback. Empty when no progress was accepted.
-	ReceiverState []byte `protobuf:"bytes,4,opt,name=receiver_state,json=receiverState,proto3" json:"receiver_state,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *OnProgressRequest) Reset() {
-	*x = OnProgressRequest{}
-	mi := &file_temporal_api_notificationservice_v1_request_response_proto_msgTypes[2]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *OnProgressRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*OnProgressRequest) ProtoMessage() {}
-
-func (x *OnProgressRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_temporal_api_notificationservice_v1_request_response_proto_msgTypes[2]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use OnProgressRequest.ProtoReflect.Descriptor instead.
-func (*OnProgressRequest) Descriptor() ([]byte, []int) {
-	return file_temporal_api_notificationservice_v1_request_response_proto_rawDescGZIP(), []int{2}
-}
-
-func (x *OnProgressRequest) GetProgress() *v12.NexusOperationProgress {
-	if x != nil {
-		return x.Progress
-	}
-	return nil
-}
-
-func (x *OnProgressRequest) GetSourceContext() *v1.Payload {
-	if x != nil {
-		return x.SourceContext
-	}
-	return nil
-}
-
-func (x *OnProgressRequest) GetOperationToken() string {
-	if x != nil {
-		return x.OperationToken
-	}
-	return ""
-}
-
-func (x *OnProgressRequest) GetReceiverState() []byte {
-	if x != nil {
-		return x.ReceiverState
-	}
-	return nil
-}
-
-// OnProgressResponse is the return type of the OnProgress operation.
-type OnProgressResponse struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
-	// Opaque state for the handler, such as a read cursor. The server stores it on the callback
-	// and sends it in the next OnProgressRequest and in the OnCompleteRequest. The server refuses
-	// further progress for the callback when the state is larger than its configured limit.
-	ReceiverState []byte `protobuf:"bytes,1,opt,name=receiver_state,json=receiverState,proto3" json:"receiver_state,omitempty"`
-	// Set when the handler did not reach `progress.position`. The server then sends the same
-	// progress again at once, unless newer progress replaced it.
-	Behind        bool `protobuf:"varint,2,opt,name=behind,proto3" json:"behind,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *OnProgressResponse) Reset() {
-	*x = OnProgressResponse{}
-	mi := &file_temporal_api_notificationservice_v1_request_response_proto_msgTypes[3]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *OnProgressResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*OnProgressResponse) ProtoMessage() {}
-
-func (x *OnProgressResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_temporal_api_notificationservice_v1_request_response_proto_msgTypes[3]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use OnProgressResponse.ProtoReflect.Descriptor instead.
-func (*OnProgressResponse) Descriptor() ([]byte, []int) {
-	return file_temporal_api_notificationservice_v1_request_response_proto_rawDescGZIP(), []int{3}
-}
-
-func (x *OnProgressResponse) GetReceiverState() []byte {
-	if x != nil {
-		return x.ReceiverState
-	}
-	return nil
-}
-
-func (x *OnProgressResponse) GetBehind() bool {
-	if x != nil {
-		return x.Behind
-	}
-	return false
-}
-
 var File_temporal_api_notificationservice_v1_request_response_proto protoreflect.FileDescriptor
 
 const file_temporal_api_notificationservice_v1_request_response_proto_rawDesc = "" +
 	"\n" +
-	":temporal/api/notificationservice/v1/request_response.proto\x12#temporal.api.notificationservice.v1\x1a$temporal/api/common/v1/message.proto\x1a%temporal/api/failure/v1/message.proto\x1a#temporal/api/nexus/v1/message.proto\"\x87\x02\n" +
+	":temporal/api/notificationservice/v1/request_response.proto\x12#temporal.api.notificationservice.v1\x1a$temporal/api/common/v1/message.proto\x1a%temporal/api/failure/v1/message.proto\"\x87\x02\n" +
 	"\x11OnCompleteRequest\x12;\n" +
 	"\asuccess\x18\x01 \x01(\v2\x1f.temporal.api.common.v1.PayloadH\x00R\asuccess\x12<\n" +
 	"\afailure\x18\x02 \x01(\v2 .temporal.api.failure.v1.FailureH\x00R\afailure\x12F\n" +
 	"\x0esource_context\x18\x03 \x01(\v2\x1f.temporal.api.common.v1.PayloadR\rsourceContext\x12%\n" +
 	"\x0ereceiver_state\x18\x04 \x01(\fR\rreceiverStateB\b\n" +
 	"\x06result\"\x14\n" +
-	"\x12OnCompleteResponse\"\xf6\x01\n" +
-	"\x11OnProgressRequest\x12I\n" +
-	"\bprogress\x18\x01 \x01(\v2-.temporal.api.nexus.v1.NexusOperationProgressR\bprogress\x12F\n" +
-	"\x0esource_context\x18\x02 \x01(\v2\x1f.temporal.api.common.v1.PayloadR\rsourceContext\x12'\n" +
-	"\x0foperation_token\x18\x03 \x01(\tR\x0eoperationToken\x12%\n" +
-	"\x0ereceiver_state\x18\x04 \x01(\fR\rreceiverState\"S\n" +
-	"\x12OnProgressResponse\x12%\n" +
-	"\x0ereceiver_state\x18\x01 \x01(\fR\rreceiverState\x12\x16\n" +
-	"\x06behind\x18\x02 \x01(\bR\x06behindB\xd2\x01\n" +
+	"\x12OnCompleteResponseB\xd2\x01\n" +
 	"&io.temporal.api.notificationservice.v1B\x14RequestResponseProtoP\x01Z=go.temporal.io/api/notificationservice/v1;notificationservice\xaa\x02%Temporalio.Api.NotificationService.V1\xea\x02(Temporalio::Api::NotificationService::V1b\x06proto3"
 
 var (
@@ -345,27 +199,22 @@ func file_temporal_api_notificationservice_v1_request_response_proto_rawDescGZIP
 	return file_temporal_api_notificationservice_v1_request_response_proto_rawDescData
 }
 
-var file_temporal_api_notificationservice_v1_request_response_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
+var file_temporal_api_notificationservice_v1_request_response_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
 var file_temporal_api_notificationservice_v1_request_response_proto_goTypes = []any{
-	(*OnCompleteRequest)(nil),          // 0: temporal.api.notificationservice.v1.OnCompleteRequest
-	(*OnCompleteResponse)(nil),         // 1: temporal.api.notificationservice.v1.OnCompleteResponse
-	(*OnProgressRequest)(nil),          // 2: temporal.api.notificationservice.v1.OnProgressRequest
-	(*OnProgressResponse)(nil),         // 3: temporal.api.notificationservice.v1.OnProgressResponse
-	(*v1.Payload)(nil),                 // 4: temporal.api.common.v1.Payload
-	(*v11.Failure)(nil),                // 5: temporal.api.failure.v1.Failure
-	(*v12.NexusOperationProgress)(nil), // 6: temporal.api.nexus.v1.NexusOperationProgress
+	(*OnCompleteRequest)(nil),  // 0: temporal.api.notificationservice.v1.OnCompleteRequest
+	(*OnCompleteResponse)(nil), // 1: temporal.api.notificationservice.v1.OnCompleteResponse
+	(*v1.Payload)(nil),         // 2: temporal.api.common.v1.Payload
+	(*v11.Failure)(nil),        // 3: temporal.api.failure.v1.Failure
 }
 var file_temporal_api_notificationservice_v1_request_response_proto_depIdxs = []int32{
-	4, // 0: temporal.api.notificationservice.v1.OnCompleteRequest.success:type_name -> temporal.api.common.v1.Payload
-	5, // 1: temporal.api.notificationservice.v1.OnCompleteRequest.failure:type_name -> temporal.api.failure.v1.Failure
-	4, // 2: temporal.api.notificationservice.v1.OnCompleteRequest.source_context:type_name -> temporal.api.common.v1.Payload
-	6, // 3: temporal.api.notificationservice.v1.OnProgressRequest.progress:type_name -> temporal.api.nexus.v1.NexusOperationProgress
-	4, // 4: temporal.api.notificationservice.v1.OnProgressRequest.source_context:type_name -> temporal.api.common.v1.Payload
-	5, // [5:5] is the sub-list for method output_type
-	5, // [5:5] is the sub-list for method input_type
-	5, // [5:5] is the sub-list for extension type_name
-	5, // [5:5] is the sub-list for extension extendee
-	0, // [0:5] is the sub-list for field type_name
+	2, // 0: temporal.api.notificationservice.v1.OnCompleteRequest.success:type_name -> temporal.api.common.v1.Payload
+	3, // 1: temporal.api.notificationservice.v1.OnCompleteRequest.failure:type_name -> temporal.api.failure.v1.Failure
+	2, // 2: temporal.api.notificationservice.v1.OnCompleteRequest.source_context:type_name -> temporal.api.common.v1.Payload
+	3, // [3:3] is the sub-list for method output_type
+	3, // [3:3] is the sub-list for method input_type
+	3, // [3:3] is the sub-list for extension type_name
+	3, // [3:3] is the sub-list for extension extendee
+	0, // [0:3] is the sub-list for field type_name
 }
 
 func init() { file_temporal_api_notificationservice_v1_request_response_proto_init() }
@@ -383,7 +232,7 @@ func file_temporal_api_notificationservice_v1_request_response_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_temporal_api_notificationservice_v1_request_response_proto_rawDesc), len(file_temporal_api_notificationservice_v1_request_response_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   4,
+			NumMessages:   2,
 			NumExtensions: 0,
 			NumServices:   0,
 		},
