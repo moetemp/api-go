@@ -28,7 +28,7 @@ var File_temporal_api_workflowservice_v1_service_proto protoreflect.FileDescript
 
 const file_temporal_api_workflowservice_v1_service_proto_rawDesc = "" +
 	"\n" +
-	"-temporal/api/workflowservice/v1/service.proto\x12\x1ftemporal.api.workflowservice.v1\x1a\x1cgoogle/api/annotations.proto\x1a!nexusannotations/v1/options.proto\x1a+temporal/api/protometa/v1/annotations.proto\x1a6temporal/api/workflowservice/v1/request_response.proto\x1a<temporal/api/workflowservice/v1/nexus_request_response.proto\x1a=temporal/api/workflowservice/v1/stream_request_response.proto2\xac\xbc\x02\n" +
+	"-temporal/api/workflowservice/v1/service.proto\x12\x1ftemporal.api.workflowservice.v1\x1a\x1cgoogle/api/annotations.proto\x1a!nexusannotations/v1/options.proto\x1a+temporal/api/protometa/v1/annotations.proto\x1a6temporal/api/workflowservice/v1/request_response.proto\x1a<temporal/api/workflowservice/v1/nexus_request_response.proto\x1a=temporal/api/workflowservice/v1/stream_request_response.proto2\xf7\xbb\x02\n" +
 	"\x0fWorkflowService\x12\xc3\x01\n" +
 	"\x11RegisterNamespace\x129.temporal.api.workflowservice.v1.RegisterNamespaceRequest\x1a:.temporal.api.workflowservice.v1.RegisterNamespaceResponse\"7\x82\xd3\xe4\x93\x021:\x01*Z\x17:\x01*\"\x12/api/v1/namespaces\"\x13/cluster/namespaces\x12\xd5\x01\n" +
 	"\x11DescribeNamespace\x129.temporal.api.workflowservice.v1.DescribeNamespaceRequest\x1a:.temporal.api.workflowservice.v1.DescribeNamespaceResponse\"I\x82\xd3\xe4\x93\x02CZ \x12\x1e/api/v1/namespaces/{namespace}\x12\x1f/cluster/namespaces/{namespace}\x12\xb4\x01\n" +
@@ -225,11 +225,11 @@ const file_temporal_api_workflowservice_v1_service_proto_rawDesc = "" +
 	" TerminateNexusOperationExecution\x12H.temporal.api.workflowservice.v1.TerminateNexusOperationExecutionRequest\x1aI.temporal.api.workflowservice.v1.TerminateNexusOperationExecutionResponse\"\x9c\x01\x82\xd3\xe4\x93\x02\x95\x01:\x01*ZM:\x01*\"H/api/v1/namespaces/{namespace}/nexus-operations/{operation_id}/terminate\"A/namespaces/{namespace}/nexus-operations/{operation_id}/terminate\x12\xb0\x01\n" +
 	"\x1dDeleteNexusOperationExecution\x12E.temporal.api.workflowservice.v1.DeleteNexusOperationExecutionRequest\x1aF.temporal.api.workflowservice.v1.DeleteNexusOperationExecutionResponse\"\x00\x12\xc1\x03\n" +
 	"!PollWorkflowExecutionTimeSkipping\x12I.temporal.api.workflowservice.v1.PollWorkflowExecutionTimeSkippingRequest\x1aJ.temporal.api.workflowservice.v1.PollWorkflowExecutionTimeSkippingResponse\"\x84\x02\x8a\x9d\xcc\x1bA\n" +
-	"\x14temporal-resource-id\x12)workflow:{workflow_execution.workflow_id}\x82\xd3\xe4\x93\x02\xb7\x01Z^\x12\\/api/v1/namespaces/{namespace}/workflows/{workflow_execution.workflow_id}/time-skipping/poll\x12U/namespaces/{namespace}/workflows/{workflow_execution.workflow_id}/time-skipping/poll\x12\xa2\x01\n" +
-	"\x14AttachStreamCallback\x12<.temporal.api.workflowservice.v1.AttachStreamCallbackRequest\x1a=.temporal.api.workflowservice.v1.AttachStreamCallbackResponse\"\r҂\x04\t\x12\aexposed\x12\xa2\x01\n" +
-	"\x14DetachStreamCallback\x12<.temporal.api.workflowservice.v1.DetachStreamCallbackRequest\x1a=.temporal.api.workflowservice.v1.DetachStreamCallbackResponse\"\r҂\x04\t\x12\aexposed\x12\x9c\x01\n" +
-	"\x12WaitStreamCallback\x12:.temporal.api.workflowservice.v1.WaitStreamCallbackRequest\x1a;.temporal.api.workflowservice.v1.WaitStreamCallbackResponse\"\r҂\x04\t\x12\aexposed\x12\x8a\x01\n" +
-	"\fNotifyStream\x124.temporal.api.workflowservice.v1.NotifyStreamRequest\x1a5.temporal.api.workflowservice.v1.NotifyStreamResponse\"\r҂\x04\t\x12\aexposed\x12\x9b\x01\n" +
+	"\x14temporal-resource-id\x12)workflow:{workflow_execution.workflow_id}\x82\xd3\xe4\x93\x02\xb7\x01Z^\x12\\/api/v1/namespaces/{namespace}/workflows/{workflow_execution.workflow_id}/time-skipping/poll\x12U/namespaces/{namespace}/workflows/{workflow_execution.workflow_id}/time-skipping/poll\x12\x95\x01\n" +
+	"\x14AttachStreamCallback\x12<.temporal.api.workflowservice.v1.AttachStreamCallbackRequest\x1a=.temporal.api.workflowservice.v1.AttachStreamCallbackResponse\"\x00\x12\x95\x01\n" +
+	"\x14DetachStreamCallback\x12<.temporal.api.workflowservice.v1.DetachStreamCallbackRequest\x1a=.temporal.api.workflowservice.v1.DetachStreamCallbackResponse\"\x00\x12\x8f\x01\n" +
+	"\x12WaitStreamCallback\x12:.temporal.api.workflowservice.v1.WaitStreamCallbackRequest\x1a;.temporal.api.workflowservice.v1.WaitStreamCallbackResponse\"\x00\x12}\n" +
+	"\fNotifyStream\x124.temporal.api.workflowservice.v1.NotifyStreamRequest\x1a5.temporal.api.workflowservice.v1.NotifyStreamResponse\"\x00\x12\x9b\x01\n" +
 	"\x16DescribeStreamNotifier\x12>.temporal.api.workflowservice.v1.DescribeStreamNotifierRequest\x1a?.temporal.api.workflowservice.v1.DescribeStreamNotifierResponse\"\x00\x12\x8f\x01\n" +
 	"\x12PollStreamNotifier\x12:.temporal.api.workflowservice.v1.PollStreamNotifierRequest\x1a;.temporal.api.workflowservice.v1.PollStreamNotifierResponse\"\x00\x12\xa4\x01\n" +
 	"\x19ExecuteSyncNexusOperation\x12A.temporal.api.workflowservice.v1.ExecuteSyncNexusOperationRequest\x1aB.temporal.api.workflowservice.v1.ExecuteSyncNexusOperationResponse\"\x00\x12\x80\x01\n" +
