@@ -1015,9 +1015,12 @@ type AppendRecordsRequest struct {
 	PreviousCompletedTask *WorkflowTaskEpoch `protobuf:"bytes,6,opt,name=previous_completed_task,json=previousCompletedTask,proto3" json:"previous_completed_task,omitempty"`
 	FailedTasks           []int64            `protobuf:"varint,7,rep,packed,name=failed_tasks,json=failedTasks,proto3" json:"failed_tasks,omitempty"`
 	// Workflow only. A retry run's first batch: the previous run, whose Records it withdraws.
-	WithdrawRun   string `protobuf:"bytes,8,opt,name=withdraw_run,json=withdrawRun,proto3" json:"withdraw_run,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	WithdrawRun string `protobuf:"bytes,8,opt,name=withdraw_run,json=withdrawRun,proto3" json:"withdraw_run,omitempty"`
+	// Workflow only. The batch before a Local Activity, whose task facts come later with the
+	// task's completion. It withdraws no task and keeps no facts. withdraw_run still applies.
+	DeferWithdrawal bool `protobuf:"varint,9,opt,name=defer_withdrawal,json=deferWithdrawal,proto3" json:"defer_withdrawal,omitempty"`
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
 }
 
 func (x *AppendRecordsRequest) Reset() {
@@ -1104,6 +1107,13 @@ func (x *AppendRecordsRequest) GetWithdrawRun() string {
 		return x.WithdrawRun
 	}
 	return ""
+}
+
+func (x *AppendRecordsRequest) GetDeferWithdrawal() bool {
+	if x != nil {
+		return x.DeferWithdrawal
+	}
+	return false
 }
 
 type AppendRecordsResponse struct {
@@ -1700,7 +1710,7 @@ const file_temporal_api_streamservice_v1_stream_service_proto_rawDesc = "" +
 	"\x14CreateStreamResponse\x12@\n" +
 	"\x06stream\x18\x01 \x01(\v2(.temporal.api.streamservice.v1.StreamRefR\x06stream\x12\x18\n" +
 	"\acreated\x18\x02 \x01(\bR\acreated\x12C\n" +
-	"\x06status\x18\x03 \x01(\x0e2+.temporal.api.streamservice.v1.StreamStatusR\x06status\"\xce\x03\n" +
+	"\x06status\x18\x03 \x01(\x0e2+.temporal.api.streamservice.v1.StreamStatusR\x06status\"\xf9\x03\n" +
 	"\x14AppendRecordsRequest\x12\x1c\n" +
 	"\tnamespace\x18\x01 \x01(\tR\tnamespace\x12@\n" +
 	"\x06stream\x18\x02 \x01(\v2(.temporal.api.streamservice.v1.StreamRefR\x06stream\x12C\n" +
@@ -1709,7 +1719,8 @@ const file_temporal_api_streamservice_v1_stream_service_proto_rawDesc = "" +
 	"\arecords\x18\x05 \x03(\v2+.temporal.api.streamservice.v1.AppendRecordR\arecords\x12h\n" +
 	"\x17previous_completed_task\x18\x06 \x01(\v20.temporal.api.streamservice.v1.WorkflowTaskEpochR\x15previousCompletedTask\x12!\n" +
 	"\ffailed_tasks\x18\a \x03(\x03R\vfailedTasks\x12!\n" +
-	"\fwithdraw_run\x18\b \x01(\tR\vwithdrawRun\"[\n" +
+	"\fwithdraw_run\x18\b \x01(\tR\vwithdrawRun\x12)\n" +
+	"\x10defer_withdrawal\x18\t \x01(\bR\x0fdeferWithdrawal\"[\n" +
 	"\x15AppendRecordsResponse\x12!\n" +
 	"\ffirst_offset\x18\x01 \x01(\x03R\vfirstOffset\x12\x1f\n" +
 	"\vlast_offset\x18\x02 \x01(\x03R\n" +
