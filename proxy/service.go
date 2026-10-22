@@ -432,6 +432,10 @@ func (s *workflowServiceProxyServer) StartBatchOperation(ctx context.Context, in
 	return s.client.StartBatchOperation(s.reqCtx(ctx), in0)
 }
 
+func (s *workflowServiceProxyServer) StartNexusOperation(ctx context.Context, in0 *workflowservice.StartNexusOperationRequest) (*workflowservice.StartNexusOperationResponse, error) {
+	return s.client.StartNexusOperation(s.reqCtx(ctx), in0)
+}
+
 func (s *workflowServiceProxyServer) StartNexusOperationExecution(ctx context.Context, in0 *workflowservice.StartNexusOperationExecutionRequest) (*workflowservice.StartNexusOperationExecutionResponse, error) {
 	return s.client.StartNexusOperationExecution(s.reqCtx(ctx), in0)
 }

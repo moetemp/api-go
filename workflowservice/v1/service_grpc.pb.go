@@ -123,6 +123,7 @@ const (
 	WorkflowService_PauseWorkflowExecution_FullMethodName                       = "/temporal.api.workflowservice.v1.WorkflowService/PauseWorkflowExecution"
 	WorkflowService_UnpauseWorkflowExecution_FullMethodName                     = "/temporal.api.workflowservice.v1.WorkflowService/UnpauseWorkflowExecution"
 	WorkflowService_StartActivityExecution_FullMethodName                       = "/temporal.api.workflowservice.v1.WorkflowService/StartActivityExecution"
+	WorkflowService_StartNexusOperation_FullMethodName                          = "/temporal.api.workflowservice.v1.WorkflowService/StartNexusOperation"
 	WorkflowService_StartNexusOperationExecution_FullMethodName                 = "/temporal.api.workflowservice.v1.WorkflowService/StartNexusOperationExecution"
 	WorkflowService_DescribeActivityExecution_FullMethodName                    = "/temporal.api.workflowservice.v1.WorkflowService/DescribeActivityExecution"
 	WorkflowService_DescribeNexusOperationExecution_FullMethodName              = "/temporal.api.workflowservice.v1.WorkflowService/DescribeNexusOperationExecution"
@@ -765,6 +766,12 @@ type WorkflowServiceClient interface {
 	// Returns an `ActivityExecutionAlreadyStarted` error if an instance already exists with same activity ID in this namespace
 	// unless permitted by the specified ID conflict policy.
 	StartActivityExecution(ctx context.Context, in *StartActivityExecutionRequest, opts ...grpc.CallOption) (*StartActivityExecutionResponse, error)
+	// StartNexusOperation starts a Nexus operation on an endpoint, communicating directly with the
+	// endpoint using the caller's namespace credentials. No caller-side state is created.
+	// The response follows the Nexus RPC spec semantics: synchronous completion, asynchronous start,
+	// or operation error.
+	// Handler errors (e.g., NOT_FOUND, BAD_REQUEST) are returned as gRPC errors.
+	StartNexusOperation(ctx context.Context, in *StartNexusOperationRequest, opts ...grpc.CallOption) (*StartNexusOperationResponse, error)
 	// StartNexusOperationExecution starts a new Nexus operation.
 	//
 	// Returns a `NexusOperationExecutionAlreadyStarted` error if an instance already exists with same operation ID in this
@@ -1917,6 +1924,16 @@ func (c *workflowServiceClient) StartActivityExecution(ctx context.Context, in *
 	return out, nil
 }
 
+func (c *workflowServiceClient) StartNexusOperation(ctx context.Context, in *StartNexusOperationRequest, opts ...grpc.CallOption) (*StartNexusOperationResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(StartNexusOperationResponse)
+	err := c.cc.Invoke(ctx, WorkflowService_StartNexusOperation_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *workflowServiceClient) StartNexusOperationExecution(ctx context.Context, in *StartNexusOperationExecutionRequest, opts ...grpc.CallOption) (*StartNexusOperationExecutionResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(StartNexusOperationExecutionResponse)
@@ -2737,6 +2754,12 @@ type WorkflowServiceServer interface {
 	// Returns an `ActivityExecutionAlreadyStarted` error if an instance already exists with same activity ID in this namespace
 	// unless permitted by the specified ID conflict policy.
 	StartActivityExecution(context.Context, *StartActivityExecutionRequest) (*StartActivityExecutionResponse, error)
+	// StartNexusOperation starts a Nexus operation on an endpoint, communicating directly with the
+	// endpoint using the caller's namespace credentials. No caller-side state is created.
+	// The response follows the Nexus RPC spec semantics: synchronous completion, asynchronous start,
+	// or operation error.
+	// Handler errors (e.g., NOT_FOUND, BAD_REQUEST) are returned as gRPC errors.
+	StartNexusOperation(context.Context, *StartNexusOperationRequest) (*StartNexusOperationResponse, error)
 	// StartNexusOperationExecution starts a new Nexus operation.
 	//
 	// Returns a `NexusOperationExecutionAlreadyStarted` error if an instance already exists with same operation ID in this
@@ -3167,6 +3190,9 @@ func (UnimplementedWorkflowServiceServer) UnpauseWorkflowExecution(context.Conte
 }
 func (UnimplementedWorkflowServiceServer) StartActivityExecution(context.Context, *StartActivityExecutionRequest) (*StartActivityExecutionResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method StartActivityExecution not implemented")
+}
+func (UnimplementedWorkflowServiceServer) StartNexusOperation(context.Context, *StartNexusOperationRequest) (*StartNexusOperationResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method StartNexusOperation not implemented")
 }
 func (UnimplementedWorkflowServiceServer) StartNexusOperationExecution(context.Context, *StartNexusOperationExecutionRequest) (*StartNexusOperationExecutionResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method StartNexusOperationExecution not implemented")
@@ -5103,6 +5129,24 @@ func _WorkflowService_StartActivityExecution_Handler(srv interface{}, ctx contex
 	return interceptor(ctx, in, info, handler)
 }
 
+func _WorkflowService_StartNexusOperation_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(StartNexusOperationRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(WorkflowServiceServer).StartNexusOperation(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: WorkflowService_StartNexusOperation_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(WorkflowServiceServer).StartNexusOperation(ctx, req.(*StartNexusOperationRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _WorkflowService_StartNexusOperationExecution_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(StartNexusOperationExecutionRequest)
 	if err := dec(in); err != nil {
@@ -5881,6 +5925,10 @@ var WorkflowService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "StartActivityExecution",
 			Handler:    _WorkflowService_StartActivityExecution_Handler,
+		},
+		{
+			MethodName: "StartNexusOperation",
+			Handler:    _WorkflowService_StartNexusOperation_Handler,
 		},
 		{
 			MethodName: "StartNexusOperationExecution",
