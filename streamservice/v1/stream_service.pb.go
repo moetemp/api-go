@@ -1323,6 +1323,12 @@ type ReadRecordsRequest struct {
 	// Also read the Topics that start with one of these. A Record passes when its Topic is in
 	// topics or starts with a prefix. Both empty reads every Topic.
 	TopicPrefixes []string `protobuf:"bytes,10,rep,name=topic_prefixes,json=topicPrefixes,proto3" json:"topic_prefixes,omitempty"`
+	// The exclusive end of the read. The read scans no entry at or after it, the close Record
+	// included, so a replay reads the same range. Zero means no end.
+	ToOffset int64 `protobuf:"varint,11,opt,name=to_offset,json=toOffset,proto3" json:"to_offset,omitempty"`
+	// Park as a normal read, then answer with no Records and next_offset = from_offset, when a
+	// Record that passes the filter exists, when the Stream closes (done), or when wait ends.
+	WakeOnly      bool `protobuf:"varint,12,opt,name=wake_only,json=wakeOnly,proto3" json:"wake_only,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1418,6 +1424,20 @@ func (x *ReadRecordsRequest) GetTopicPrefixes() []string {
 		return x.TopicPrefixes
 	}
 	return nil
+}
+
+func (x *ReadRecordsRequest) GetToOffset() int64 {
+	if x != nil {
+		return x.ToOffset
+	}
+	return 0
+}
+
+func (x *ReadRecordsRequest) GetWakeOnly() bool {
+	if x != nil {
+		return x.WakeOnly
+	}
+	return false
 }
 
 type ReadRecordsResponse struct {
@@ -1734,7 +1754,7 @@ const file_temporal_api_streamservice_v1_stream_service_proto_rawDesc = "" +
 	"\x17previous_completed_task\x18\x06 \x01(\v20.temporal.api.streamservice.v1.WorkflowTaskEpochR\x15previousCompletedTask\x12!\n" +
 	"\ffailed_tasks\x18\a \x03(\x03R\vfailedTasks\x12!\n" +
 	"\fwithdraw_run\x18\b \x01(\tR\vwithdrawRun\"\x15\n" +
-	"\x13CloseStreamResponse\"\xb4\x03\n" +
+	"\x13CloseStreamResponse\"\xee\x03\n" +
 	"\x12ReadRecordsRequest\x12\x1c\n" +
 	"\tnamespace\x18\x01 \x01(\tR\tnamespace\x12@\n" +
 	"\x06stream\x18\x02 \x01(\v2(.temporal.api.streamservice.v1.StreamRefR\x06stream\x12\x1f\n" +
@@ -1748,7 +1768,9 @@ const file_temporal_api_streamservice_v1_stream_service_proto_rawDesc = "" +
 	"\vcreate_wait\x18\b \x01(\v2\x19.google.protobuf.DurationR\n" +
 	"createWait\x12%\n" +
 	"\x0etopic_prefixes\x18\n" +
-	" \x03(\tR\rtopicPrefixesJ\x04\b\t\x10\n" +
+	" \x03(\tR\rtopicPrefixes\x12\x1b\n" +
+	"\tto_offset\x18\v \x01(\x03R\btoOffset\x12\x1b\n" +
+	"\twake_only\x18\f \x01(\bR\bwakeOnlyJ\x04\b\t\x10\n" +
 	"R\fidle_timeout\"\x91\x01\n" +
 	"\x13ReadRecordsResponse\x12E\n" +
 	"\arecords\x18\x01 \x03(\v2+.temporal.api.streamservice.v1.StreamRecordR\arecords\x12\x1f\n" +
