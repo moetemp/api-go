@@ -28,6 +28,7 @@ import (
 	"go.temporal.io/api/query/v1"
 	"go.temporal.io/api/schedule/v1"
 	"go.temporal.io/api/sdk/v1"
+	"go.temporal.io/api/streamservice/v1"
 	"go.temporal.io/api/update/v1"
 	"go.temporal.io/api/workflow/v1"
 	workflowservice "go.temporal.io/api/workflowservice/v1"
@@ -3639,6 +3640,164 @@ func visitPayloads(
 
 			ctx.Context = prevCtx
 
+		case []*streamservice.AppendRecord:
+			for _, x := range o {
+				if err := visitPayloads(ctx, options, parent, concState, x); err != nil {
+					return err
+				}
+			}
+
+		case *streamservice.AppendRecord:
+
+			if o == nil {
+				continue
+			}
+
+			prevCtx := ctx.Context
+			if options.ContextHook != nil {
+				var hookErr error
+				if ctx.Context, hookErr = options.ContextHook(prevCtx, o); hookErr != nil {
+					return hookErr
+				}
+			}
+
+			if o.Body != nil {
+				if err := visitPayload(ctx, options, o, concState, &o.Body); err != nil {
+					return err
+				}
+			}
+
+			ctx.Context = prevCtx
+
+		case *streamservice.AppendRecordsRequest:
+
+			if o == nil {
+				continue
+			}
+
+			prevCtx := ctx.Context
+			if options.ContextHook != nil {
+				var hookErr error
+				if ctx.Context, hookErr = options.ContextHook(prevCtx, o); hookErr != nil {
+					return hookErr
+				}
+			}
+
+			if err := visitPayloads(
+				ctx,
+				options,
+				o,
+				concState,
+				o.GetRecords(),
+			); err != nil {
+				return err
+			}
+
+			ctx.Context = prevCtx
+
+		case *streamservice.CloseStreamRequest:
+
+			if o == nil {
+				continue
+			}
+
+			prevCtx := ctx.Context
+			if options.ContextHook != nil {
+				var hookErr error
+				if ctx.Context, hookErr = options.ContextHook(prevCtx, o); hookErr != nil {
+					return hookErr
+				}
+			}
+
+			if o.Result != nil {
+				if err := visitPayload(ctx, options, o, concState, &o.Result); err != nil {
+					return err
+				}
+			}
+
+			if err := visitPayloads(
+				ctx,
+				options,
+				o,
+				concState,
+				o.GetFailure(),
+			); err != nil {
+				return err
+			}
+
+			ctx.Context = prevCtx
+
+		case *streamservice.ReadRecordsResponse:
+
+			if o == nil {
+				continue
+			}
+
+			prevCtx := ctx.Context
+			if options.ContextHook != nil {
+				var hookErr error
+				if ctx.Context, hookErr = options.ContextHook(prevCtx, o); hookErr != nil {
+					return hookErr
+				}
+			}
+
+			if err := visitPayloads(
+				ctx,
+				options,
+				o,
+				concState,
+				o.GetRecords(),
+			); err != nil {
+				return err
+			}
+
+			ctx.Context = prevCtx
+
+		case []*streamservice.StreamRecord:
+			for _, x := range o {
+				if err := visitPayloads(ctx, options, parent, concState, x); err != nil {
+					return err
+				}
+			}
+
+		case *streamservice.StreamRecord:
+
+			if o == nil {
+				continue
+			}
+
+			prevCtx := ctx.Context
+			if options.ContextHook != nil {
+				var hookErr error
+				if ctx.Context, hookErr = options.ContextHook(prevCtx, o); hookErr != nil {
+					return hookErr
+				}
+			}
+
+			if o.Body != nil {
+				if err := visitPayload(ctx, options, o, concState, &o.Body); err != nil {
+					return err
+				}
+			}
+
+			if o.CloseResult != nil {
+				if err := visitPayload(ctx, options, o, concState, &o.CloseResult); err != nil {
+					return err
+				}
+			}
+
+			if err := visitPayloads(
+				ctx,
+				options,
+				o,
+				concState,
+				o.GetCloseFailure(),
+			); err != nil {
+				return err
+			}
+
+			ctx.Context = prevCtx
+
 		case *update.Acceptance:
 
 			if o == nil {
@@ -6792,6 +6951,52 @@ func visitFailures(ctx *VisitFailuresContext, options *VisitFailuresOptions, obj
 				ctx,
 				options,
 				o.GetFailure(),
+			); err != nil {
+				return err
+			}
+
+		case *streamservice.CloseStreamRequest:
+			if o == nil {
+				continue
+			}
+			ctx.Parent = o
+			if err := visitFailures(
+				ctx,
+				options,
+				o.GetFailure(),
+			); err != nil {
+				return err
+			}
+
+		case *streamservice.ReadRecordsResponse:
+			if o == nil {
+				continue
+			}
+			ctx.Parent = o
+			if err := visitFailures(
+				ctx,
+				options,
+				o.GetRecords(),
+			); err != nil {
+				return err
+			}
+
+		case []*streamservice.StreamRecord:
+			for _, x := range o {
+				if err := visitFailures(ctx, options, x); err != nil {
+					return err
+				}
+			}
+
+		case *streamservice.StreamRecord:
+			if o == nil {
+				continue
+			}
+			ctx.Parent = o
+			if err := visitFailures(
+				ctx,
+				options,
+				o.GetCloseFailure(),
 			); err != nil {
 				return err
 			}
