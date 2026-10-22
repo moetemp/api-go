@@ -8145,6 +8145,80 @@ func (this *ListActivityExecutionsResponse) Equal(that interface{}) bool {
 	return proto.Equal(this, that1)
 }
 
+// Marshal an object of type StartNexusOperationRequest to the protobuf v3 wire format
+func (val *StartNexusOperationRequest) Marshal() ([]byte, error) {
+	return proto.Marshal(val)
+}
+
+// Unmarshal an object of type StartNexusOperationRequest from the protobuf v3 wire format
+func (val *StartNexusOperationRequest) Unmarshal(buf []byte) error {
+	return proto.Unmarshal(buf, val)
+}
+
+// Size returns the size of the object, in bytes, once serialized
+func (val *StartNexusOperationRequest) Size() int {
+	return proto.Size(val)
+}
+
+// Equal returns whether two StartNexusOperationRequest values are equivalent by recursively
+// comparing the message's fields.
+// For more information see the documentation for
+// https://pkg.go.dev/google.golang.org/protobuf/proto#Equal
+func (this *StartNexusOperationRequest) Equal(that interface{}) bool {
+	if that == nil {
+		return this == nil
+	}
+
+	var that1 *StartNexusOperationRequest
+	switch t := that.(type) {
+	case *StartNexusOperationRequest:
+		that1 = t
+	case StartNexusOperationRequest:
+		that1 = &t
+	default:
+		return false
+	}
+
+	return proto.Equal(this, that1)
+}
+
+// Marshal an object of type StartNexusOperationResponse to the protobuf v3 wire format
+func (val *StartNexusOperationResponse) Marshal() ([]byte, error) {
+	return proto.Marshal(val)
+}
+
+// Unmarshal an object of type StartNexusOperationResponse from the protobuf v3 wire format
+func (val *StartNexusOperationResponse) Unmarshal(buf []byte) error {
+	return proto.Unmarshal(buf, val)
+}
+
+// Size returns the size of the object, in bytes, once serialized
+func (val *StartNexusOperationResponse) Size() int {
+	return proto.Size(val)
+}
+
+// Equal returns whether two StartNexusOperationResponse values are equivalent by recursively
+// comparing the message's fields.
+// For more information see the documentation for
+// https://pkg.go.dev/google.golang.org/protobuf/proto#Equal
+func (this *StartNexusOperationResponse) Equal(that interface{}) bool {
+	if that == nil {
+		return this == nil
+	}
+
+	var that1 *StartNexusOperationResponse
+	switch t := that.(type) {
+	case *StartNexusOperationResponse:
+		that1 = t
+	case StartNexusOperationResponse:
+		that1 = &t
+	default:
+		return false
+	}
+
+	return proto.Equal(this, that1)
+}
+
 // Marshal an object of type StartNexusOperationExecutionRequest to the protobuf v3 wire format
 func (val *StartNexusOperationExecutionRequest) Marshal() ([]byte, error) {
 	return proto.Marshal(val)
