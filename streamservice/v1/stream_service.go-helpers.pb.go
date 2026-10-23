@@ -716,6 +716,28 @@ func StreamRecordKindFromString(s string) (StreamRecordKind, error) {
 }
 
 var (
+	CloseStatus_shorthandValue = map[string]int32{
+		"Unspecified": 0,
+		"Completed":   1,
+		"Failed":      2,
+		"Canceled":    3,
+		"Terminated":  4,
+		"TimedOut":    5,
+	}
+)
+
+// CloseStatusFromString parses a CloseStatus value from  either the protojson
+// canonical SCREAMING_CASE enum or the traditional temporal PascalCase enum to CloseStatus
+func CloseStatusFromString(s string) (CloseStatus, error) {
+	if v, ok := CloseStatus_value[s]; ok {
+		return CloseStatus(v), nil
+	} else if v, ok := CloseStatus_shorthandValue[s]; ok {
+		return CloseStatus(v), nil
+	}
+	return CloseStatus(0), fmt.Errorf("%s is not a valid CloseStatus", s)
+}
+
+var (
 	StreamStatus_shorthandValue = map[string]int32{
 		"Unspecified": 0,
 		"Open":        1,

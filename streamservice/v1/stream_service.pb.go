@@ -166,6 +166,83 @@ func (StreamRecordKind) EnumDescriptor() ([]byte, []int) {
 	return file_temporal_api_streamservice_v1_stream_service_proto_rawDescGZIP(), []int{1}
 }
 
+// How a Stream closed, so a reader tells a terminated or timed out owner from a failed one
+// without parsing the failure.
+type CloseStatus int32
+
+const (
+	CLOSE_STATUS_UNSPECIFIED CloseStatus = 0
+	CLOSE_STATUS_COMPLETED   CloseStatus = 1
+	CLOSE_STATUS_FAILED      CloseStatus = 2
+	CLOSE_STATUS_CANCELED    CloseStatus = 3
+	// TERMINATED and TIMED_OUT come only from the owner's end, never from a caller.
+	CLOSE_STATUS_TERMINATED CloseStatus = 4
+	CLOSE_STATUS_TIMED_OUT  CloseStatus = 5
+)
+
+// Enum value maps for CloseStatus.
+var (
+	CloseStatus_name = map[int32]string{
+		0: "CLOSE_STATUS_UNSPECIFIED",
+		1: "CLOSE_STATUS_COMPLETED",
+		2: "CLOSE_STATUS_FAILED",
+		3: "CLOSE_STATUS_CANCELED",
+		4: "CLOSE_STATUS_TERMINATED",
+		5: "CLOSE_STATUS_TIMED_OUT",
+	}
+	CloseStatus_value = map[string]int32{
+		"CLOSE_STATUS_UNSPECIFIED": 0,
+		"CLOSE_STATUS_COMPLETED":   1,
+		"CLOSE_STATUS_FAILED":      2,
+		"CLOSE_STATUS_CANCELED":    3,
+		"CLOSE_STATUS_TERMINATED":  4,
+		"CLOSE_STATUS_TIMED_OUT":   5,
+	}
+)
+
+func (x CloseStatus) Enum() *CloseStatus {
+	p := new(CloseStatus)
+	*p = x
+	return p
+}
+
+func (x CloseStatus) String() string {
+	switch x {
+	case CLOSE_STATUS_UNSPECIFIED:
+		return "Unspecified"
+	case CLOSE_STATUS_COMPLETED:
+		return "Completed"
+	case CLOSE_STATUS_FAILED:
+		return "Failed"
+	case CLOSE_STATUS_CANCELED:
+		return "Canceled"
+	case CLOSE_STATUS_TERMINATED:
+		return "Terminated"
+	case CLOSE_STATUS_TIMED_OUT:
+		return "TimedOut"
+	default:
+		return strconv.Itoa(int(x))
+	}
+
+}
+
+func (CloseStatus) Descriptor() protoreflect.EnumDescriptor {
+	return file_temporal_api_streamservice_v1_stream_service_proto_enumTypes[2].Descriptor()
+}
+
+func (CloseStatus) Type() protoreflect.EnumType {
+	return &file_temporal_api_streamservice_v1_stream_service_proto_enumTypes[2]
+}
+
+func (x CloseStatus) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use CloseStatus.Descriptor instead.
+func (CloseStatus) EnumDescriptor() ([]byte, []int) {
+	return file_temporal_api_streamservice_v1_stream_service_proto_rawDescGZIP(), []int{2}
+}
+
 type StreamStatus int32
 
 const (
@@ -214,11 +291,11 @@ func (x StreamStatus) String() string {
 }
 
 func (StreamStatus) Descriptor() protoreflect.EnumDescriptor {
-	return file_temporal_api_streamservice_v1_stream_service_proto_enumTypes[2].Descriptor()
+	return file_temporal_api_streamservice_v1_stream_service_proto_enumTypes[3].Descriptor()
 }
 
 func (StreamStatus) Type() protoreflect.EnumType {
-	return &file_temporal_api_streamservice_v1_stream_service_proto_enumTypes[2]
+	return &file_temporal_api_streamservice_v1_stream_service_proto_enumTypes[3]
 }
 
 func (x StreamStatus) Number() protoreflect.EnumNumber {
@@ -227,7 +304,7 @@ func (x StreamStatus) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use StreamStatus.Descriptor instead.
 func (StreamStatus) EnumDescriptor() ([]byte, []int) {
-	return file_temporal_api_streamservice_v1_stream_service_proto_rawDescGZIP(), []int{2}
+	return file_temporal_api_streamservice_v1_stream_service_proto_rawDescGZIP(), []int{3}
 }
 
 type ReadStart int32
@@ -273,11 +350,11 @@ func (x ReadStart) String() string {
 }
 
 func (ReadStart) Descriptor() protoreflect.EnumDescriptor {
-	return file_temporal_api_streamservice_v1_stream_service_proto_enumTypes[3].Descriptor()
+	return file_temporal_api_streamservice_v1_stream_service_proto_enumTypes[4].Descriptor()
 }
 
 func (ReadStart) Type() protoreflect.EnumType {
-	return &file_temporal_api_streamservice_v1_stream_service_proto_enumTypes[3]
+	return &file_temporal_api_streamservice_v1_stream_service_proto_enumTypes[4]
 }
 
 func (x ReadStart) Number() protoreflect.EnumNumber {
@@ -286,7 +363,7 @@ func (x ReadStart) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use ReadStart.Descriptor instead.
 func (ReadStart) EnumDescriptor() ([]byte, []int) {
-	return file_temporal_api_streamservice_v1_stream_service_proto_rawDescGZIP(), []int{3}
+	return file_temporal_api_streamservice_v1_stream_service_proto_rawDescGZIP(), []int{4}
 }
 
 // Identifies one Stream. The id is opaque to callers.
@@ -300,7 +377,11 @@ type StreamRef struct {
 	// The name of the backend that holds the Stream, as the Worker and client config register
 	// it, so every process routes a ref it receives. Empty is the default backend. The Store
 	// never reads it.
-	Backend       string `protobuf:"bytes,4,opt,name=backend,proto3" json:"backend,omitempty"`
+	Backend string `protobuf:"bytes,4,opt,name=backend,proto3" json:"backend,omitempty"`
+	// The Standalone Activity that owns the Stream. Set on the Activity's ref, so a call routes to
+	// the Activity's shard and finds the Stream in the Activity. The Store never reads these.
+	ActivityId    string `protobuf:"bytes,5,opt,name=activity_id,json=activityId,proto3" json:"activity_id,omitempty"`
+	ActivityRunId string `protobuf:"bytes,6,opt,name=activity_run_id,json=activityRunId,proto3" json:"activity_run_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -359,6 +440,20 @@ func (x *StreamRef) GetFirstExecutionRunId() string {
 func (x *StreamRef) GetBackend() string {
 	if x != nil {
 		return x.Backend
+	}
+	return ""
+}
+
+func (x *StreamRef) GetActivityId() string {
+	if x != nil {
+		return x.ActivityId
+	}
+	return ""
+}
+
+func (x *StreamRef) GetActivityRunId() string {
+	if x != nil {
+		return x.ActivityRunId
 	}
 	return ""
 }
@@ -727,15 +822,17 @@ func (x *Supersession) GetRunId() string {
 // Stream, and it is sparse: offsets have gaps, so they don't count Records. Zero is never an
 // offset. A read names its Stream, so the read checks the offset against that Stream.
 type StreamRecord struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Kind          StreamRecordKind       `protobuf:"varint,1,opt,name=kind,proto3,enum=temporal.api.streamservice.v1.StreamRecordKind" json:"kind,omitempty"`
-	Offset        int64                  `protobuf:"varint,2,opt,name=offset,proto3" json:"offset,omitempty"`
-	Topic         string                 `protobuf:"bytes,3,opt,name=topic,proto3" json:"topic,omitempty"`
-	Producer      *Producer              `protobuf:"bytes,4,opt,name=producer,proto3" json:"producer,omitempty"`
-	Body          *v1.Payload            `protobuf:"bytes,5,opt,name=body,proto3" json:"body,omitempty"`
-	Supersession  *Supersession          `protobuf:"bytes,6,opt,name=supersession,proto3" json:"supersession,omitempty"`
-	CloseResult   *v1.Payload            `protobuf:"bytes,7,opt,name=close_result,json=closeResult,proto3" json:"close_result,omitempty"`
-	CloseFailure  *v11.Failure           `protobuf:"bytes,8,opt,name=close_failure,json=closeFailure,proto3" json:"close_failure,omitempty"`
+	state        protoimpl.MessageState `protogen:"open.v1"`
+	Kind         StreamRecordKind       `protobuf:"varint,1,opt,name=kind,proto3,enum=temporal.api.streamservice.v1.StreamRecordKind" json:"kind,omitempty"`
+	Offset       int64                  `protobuf:"varint,2,opt,name=offset,proto3" json:"offset,omitempty"`
+	Topic        string                 `protobuf:"bytes,3,opt,name=topic,proto3" json:"topic,omitempty"`
+	Producer     *Producer              `protobuf:"bytes,4,opt,name=producer,proto3" json:"producer,omitempty"`
+	Body         *v1.Payload            `protobuf:"bytes,5,opt,name=body,proto3" json:"body,omitempty"`
+	Supersession *Supersession          `protobuf:"bytes,6,opt,name=supersession,proto3" json:"supersession,omitempty"`
+	CloseResult  *v1.Payload            `protobuf:"bytes,7,opt,name=close_result,json=closeResult,proto3" json:"close_result,omitempty"`
+	CloseFailure *v11.Failure           `protobuf:"bytes,8,opt,name=close_failure,json=closeFailure,proto3" json:"close_failure,omitempty"`
+	// CLOSE only. The result or the failure stays next to it.
+	CloseStatus   CloseStatus `protobuf:"varint,9,opt,name=close_status,json=closeStatus,proto3,enum=temporal.api.streamservice.v1.CloseStatus" json:"close_status,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -826,6 +923,13 @@ func (x *StreamRecord) GetCloseFailure() *v11.Failure {
 	return nil
 }
 
+func (x *StreamRecord) GetCloseStatus() CloseStatus {
+	if x != nil {
+		return x.CloseStatus
+	}
+	return CLOSE_STATUS_UNSPECIFIED
+}
+
 // Idempotent for one id, one Retention and one auto_close. ALREADY_EXISTS for another
 // Retention or another auto_close.
 type CreateStreamRequest struct {
@@ -849,7 +953,10 @@ type CreateStreamRequest struct {
 	CloseWithRun bool `protobuf:"varint,7,opt,name=close_with_run,json=closeWithRun,proto3" json:"close_with_run,omitempty"`
 	// The ref of the Stream. A Workflow-owned Stream sets workflow_id and
 	// first_execution_run_id, which name the owner's run chain.
-	Ref           *StreamRef `protobuf:"bytes,8,opt,name=ref,proto3" json:"ref,omitempty"`
+	Ref *StreamRef `protobuf:"bytes,8,opt,name=ref,proto3" json:"ref,omitempty"`
+	// A Standalone Activity's create of its own Stream. The server checks that the token is the
+	// Activity's current attempt, so a caller can't put a Stream into an Activity it isn't.
+	TaskToken     []byte `protobuf:"bytes,9,opt,name=task_token,json=taskToken,proto3" json:"task_token,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -940,6 +1047,13 @@ func (x *CreateStreamRequest) GetRef() *StreamRef {
 	return nil
 }
 
+func (x *CreateStreamRequest) GetTaskToken() []byte {
+	if x != nil {
+		return x.TaskToken
+	}
+	return nil
+}
+
 type CreateStreamResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Stream        *StreamRef             `protobuf:"bytes,1,opt,name=stream,proto3" json:"stream,omitempty"`
@@ -1019,8 +1133,11 @@ type AppendRecordsRequest struct {
 	// Workflow only. The batch before a Local Activity, whose task facts come later with the
 	// task's completion. It withdraws no task and keeps no facts. withdraw_run still applies.
 	DeferWithdrawal bool `protobuf:"varint,9,opt,name=defer_withdrawal,json=deferWithdrawal,proto3" json:"defer_withdrawal,omitempty"`
-	unknownFields   protoimpl.UnknownFields
-	sizeCache       protoimpl.SizeCache
+	// An Activity's write on the native backend. The server checks the Producer against the
+	// Activity's current attempt, so nobody else writes as that Activity.
+	TaskToken     []byte `protobuf:"bytes,10,opt,name=task_token,json=taskToken,proto3" json:"task_token,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *AppendRecordsRequest) Reset() {
@@ -1116,6 +1233,13 @@ func (x *AppendRecordsRequest) GetDeferWithdrawal() bool {
 	return false
 }
 
+func (x *AppendRecordsRequest) GetTaskToken() []byte {
+	if x != nil {
+		return x.TaskToken
+	}
+	return nil
+}
+
 type AppendRecordsResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	FirstOffset   int64                  `protobuf:"varint,1,opt,name=first_offset,json=firstOffset,proto3" json:"first_offset,omitempty"`
@@ -1179,7 +1303,11 @@ type CloseStreamRequest struct {
 	PreviousCompletedTask *WorkflowTaskEpoch `protobuf:"bytes,6,opt,name=previous_completed_task,json=previousCompletedTask,proto3" json:"previous_completed_task,omitempty"`
 	FailedTasks           []int64            `protobuf:"varint,7,rep,packed,name=failed_tasks,json=failedTasks,proto3" json:"failed_tasks,omitempty"`
 	// Workflow only. A retry run's close: the previous run, whose Records it withdraws.
-	WithdrawRun   string `protobuf:"bytes,8,opt,name=withdraw_run,json=withdrawRun,proto3" json:"withdraw_run,omitempty"`
+	WithdrawRun string `protobuf:"bytes,8,opt,name=withdraw_run,json=withdrawRun,proto3" json:"withdraw_run,omitempty"`
+	// Empty is COMPLETED with no failure and FAILED with one. A caller sets CANCELED itself.
+	Status CloseStatus `protobuf:"varint,9,opt,name=status,proto3,enum=temporal.api.streamservice.v1.CloseStatus" json:"status,omitempty"`
+	// An Activity's close on the native backend, checked as on the append.
+	TaskToken     []byte `protobuf:"bytes,10,opt,name=task_token,json=taskToken,proto3" json:"task_token,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1270,6 +1398,20 @@ func (x *CloseStreamRequest) GetWithdrawRun() string {
 	return ""
 }
 
+func (x *CloseStreamRequest) GetStatus() CloseStatus {
+	if x != nil {
+		return x.Status
+	}
+	return CLOSE_STATUS_UNSPECIFIED
+}
+
+func (x *CloseStreamRequest) GetTaskToken() []byte {
+	if x != nil {
+		return x.TaskToken
+	}
+	return nil
+}
+
 type CloseStreamResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	unknownFields protoimpl.UnknownFields
@@ -1328,7 +1470,17 @@ type ReadRecordsRequest struct {
 	ToOffset int64 `protobuf:"varint,11,opt,name=to_offset,json=toOffset,proto3" json:"to_offset,omitempty"`
 	// Park as a normal read, then answer with no Records and next_offset = from_offset, when a
 	// Record that passes the filter exists, when the Stream closes (done), or when wait ends.
-	WakeOnly      bool `protobuf:"varint,12,opt,name=wake_only,json=wakeOnly,proto3" json:"wake_only,omitempty"`
+	// Its wait may be days, since a parked read adds nothing to History while it waits.
+	WakeOnly bool `protobuf:"varint,12,opt,name=wake_only,json=wakeOnly,proto3" json:"wake_only,omitempty"`
+	// Read the newest `last` Records that pass the filter, oldest first. It needs no from_offset
+	// and no start. Not with wake_only, and not in Workflow code, where replay needs a fixed range.
+	Last int32 `protobuf:"varint,13,opt,name=last,proto3" json:"last,omitempty"`
+	// The most Record bytes in one page, so a page fits the caller's limit, such as a History
+	// marker. A larger Record still comes alone, so the read always moves on. Zero is no cap.
+	MaxBytes int64 `protobuf:"varint,14,opt,name=max_bytes,json=maxBytes,proto3" json:"max_bytes,omitempty"`
+	// The lowest offset this run read on replay. A reset run copies the reads of the old run into
+	// its History, so its floor must cover them too, not only its first live page.
+	FloorFrom     int64 `protobuf:"varint,15,opt,name=floor_from,json=floorFrom,proto3" json:"floor_from,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1440,14 +1592,38 @@ func (x *ReadRecordsRequest) GetWakeOnly() bool {
 	return false
 }
 
+func (x *ReadRecordsRequest) GetLast() int32 {
+	if x != nil {
+		return x.Last
+	}
+	return 0
+}
+
+func (x *ReadRecordsRequest) GetMaxBytes() int64 {
+	if x != nil {
+		return x.MaxBytes
+	}
+	return 0
+}
+
+func (x *ReadRecordsRequest) GetFloorFrom() int64 {
+	if x != nil {
+		return x.FloorFrom
+	}
+	return 0
+}
+
 type ReadRecordsResponse struct {
 	state   protoimpl.MessageState `protogen:"open.v1"`
 	Records []*StreamRecord        `protobuf:"bytes,1,rep,name=records,proto3" json:"records,omitempty"`
 	// The from_offset of the next read: the newest offset read + 1.
-	NextOffset    int64 `protobuf:"varint,2,opt,name=next_offset,json=nextOffset,proto3" json:"next_offset,omitempty"`
-	Done          bool  `protobuf:"varint,3,opt,name=done,proto3" json:"done,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	NextOffset int64 `protobuf:"varint,2,opt,name=next_offset,json=nextOffset,proto3" json:"next_offset,omitempty"`
+	Done       bool  `protobuf:"varint,3,opt,name=done,proto3" json:"done,omitempty"`
+	// This reader's floor keeps more than half of the Stream's byte cap. The writer fails when the
+	// cap fills, and only the reader's continue-as-new frees it.
+	ContinueAsNewSuggested bool `protobuf:"varint,4,opt,name=continue_as_new_suggested,json=continueAsNewSuggested,proto3" json:"continue_as_new_suggested,omitempty"`
+	unknownFields          protoimpl.UnknownFields
+	sizeCache              protoimpl.SizeCache
 }
 
 func (x *ReadRecordsResponse) Reset() {
@@ -1497,6 +1673,13 @@ func (x *ReadRecordsResponse) GetNextOffset() int64 {
 func (x *ReadRecordsResponse) GetDone() bool {
 	if x != nil {
 		return x.Done
+	}
+	return false
+}
+
+func (x *ReadRecordsResponse) GetContinueAsNewSuggested() bool {
+	if x != nil {
+		return x.ContinueAsNewSuggested
 	}
 	return false
 }
@@ -1628,6 +1811,8 @@ func (x *DescribeStreamResponse) GetAutoClose() *durationpb.Duration {
 type StreamErrorDetails struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// A token such as `stream_closed`, `stream_fenced` or `stream_format_too_new`.
+	// `seq_divergent` is a resend with the sequence of the last batch and other content.
+	// `stream_not_owner` is a close or a Producer that the Stream's owner doesn't allow.
 	Reason        string `protobuf:"bytes,1,opt,name=reason,proto3" json:"reason,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -1674,13 +1859,16 @@ var File_temporal_api_streamservice_v1_stream_service_proto protoreflect.FileDes
 
 const file_temporal_api_streamservice_v1_stream_service_proto_rawDesc = "" +
 	"\n" +
-	"2temporal/api/streamservice/v1/stream_service.proto\x12\x1dtemporal.api.streamservice.v1\x1a\x1egoogle/protobuf/duration.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a$temporal/api/common/v1/message.proto\x1a%temporal/api/failure/v1/message.proto\"\x8b\x01\n" +
+	"2temporal/api/streamservice/v1/stream_service.proto\x12\x1dtemporal.api.streamservice.v1\x1a\x1egoogle/protobuf/duration.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a$temporal/api/common/v1/message.proto\x1a%temporal/api/failure/v1/message.proto\"\xd4\x01\n" +
 	"\tStreamRef\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1f\n" +
 	"\vworkflow_id\x18\x02 \x01(\tR\n" +
 	"workflowId\x123\n" +
 	"\x16first_execution_run_id\x18\x03 \x01(\tR\x13firstExecutionRunId\x12\x18\n" +
-	"\abackend\x18\x04 \x01(\tR\abackend\"\x99\x02\n" +
+	"\abackend\x18\x04 \x01(\tR\abackend\x12\x1f\n" +
+	"\vactivity_id\x18\x05 \x01(\tR\n" +
+	"activityId\x12&\n" +
+	"\x0factivity_run_id\x18\x06 \x01(\tR\ractivityRunId\"\x99\x02\n" +
 	"\rProducerEpoch\x121\n" +
 	"\x15task_started_event_id\x18\x01 \x01(\x03R\x12taskStartedEventId\x12!\n" +
 	"\ftask_attempt\x18\x02 \x01(\x05R\vtaskAttempt\x12F\n" +
@@ -1707,7 +1895,7 @@ const file_temporal_api_streamservice_v1_stream_service_proto_rawDesc = "" +
 	"\x17previous_completed_task\x18\x04 \x01(\v20.temporal.api.streamservice.v1.WorkflowTaskEpochR\x15previousCompletedTask\x12!\n" +
 	"\ffailed_tasks\x18\x05 \x03(\x03R\vfailedTasks\x12!\n" +
 	"\fwithdraw_run\x18\x06 \x01(\tR\vwithdrawRun\x12\x15\n" +
-	"\x06run_id\x18\a \x01(\tR\x05runId\"\xd7\x03\n" +
+	"\x06run_id\x18\a \x01(\tR\x05runId\"\xa6\x04\n" +
 	"\fStreamRecord\x12C\n" +
 	"\x04kind\x18\x01 \x01(\x0e2/.temporal.api.streamservice.v1.StreamRecordKindR\x04kind\x12\x16\n" +
 	"\x06offset\x18\x02 \x01(\x03R\x06offset\x12\x14\n" +
@@ -1716,7 +1904,8 @@ const file_temporal_api_streamservice_v1_stream_service_proto_rawDesc = "" +
 	"\x04body\x18\x05 \x01(\v2\x1f.temporal.api.common.v1.PayloadR\x04body\x12O\n" +
 	"\fsupersession\x18\x06 \x01(\v2+.temporal.api.streamservice.v1.SupersessionR\fsupersession\x12B\n" +
 	"\fclose_result\x18\a \x01(\v2\x1f.temporal.api.common.v1.PayloadR\vcloseResult\x12E\n" +
-	"\rclose_failure\x18\b \x01(\v2 .temporal.api.failure.v1.FailureR\fcloseFailure\"\x87\x03\n" +
+	"\rclose_failure\x18\b \x01(\v2 .temporal.api.failure.v1.FailureR\fcloseFailure\x12M\n" +
+	"\fclose_status\x18\t \x01(\x0e2*.temporal.api.streamservice.v1.CloseStatusR\vcloseStatus\"\xa6\x03\n" +
 	"\x13CreateStreamRequest\x12\x1c\n" +
 	"\tnamespace\x18\x01 \x01(\tR\tnamespace\x12\x1b\n" +
 	"\tstream_id\x18\x02 \x01(\tR\bstreamId\x127\n" +
@@ -1726,11 +1915,13 @@ const file_temporal_api_streamservice_v1_stream_service_proto_rawDesc = "" +
 	"auto_close\x18\x05 \x01(\v2\x19.google.protobuf.DurationR\tautoClose\x12=\n" +
 	"\x05owner\x18\x06 \x01(\v2'.temporal.api.streamservice.v1.ProducerR\x05owner\x12$\n" +
 	"\x0eclose_with_run\x18\a \x01(\bR\fcloseWithRun\x12:\n" +
-	"\x03ref\x18\b \x01(\v2(.temporal.api.streamservice.v1.StreamRefR\x03ref\"\xb7\x01\n" +
+	"\x03ref\x18\b \x01(\v2(.temporal.api.streamservice.v1.StreamRefR\x03ref\x12\x1d\n" +
+	"\n" +
+	"task_token\x18\t \x01(\fR\ttaskToken\"\xb7\x01\n" +
 	"\x14CreateStreamResponse\x12@\n" +
 	"\x06stream\x18\x01 \x01(\v2(.temporal.api.streamservice.v1.StreamRefR\x06stream\x12\x18\n" +
 	"\acreated\x18\x02 \x01(\bR\acreated\x12C\n" +
-	"\x06status\x18\x03 \x01(\x0e2+.temporal.api.streamservice.v1.StreamStatusR\x06status\"\xf9\x03\n" +
+	"\x06status\x18\x03 \x01(\x0e2+.temporal.api.streamservice.v1.StreamStatusR\x06status\"\x98\x04\n" +
 	"\x14AppendRecordsRequest\x12\x1c\n" +
 	"\tnamespace\x18\x01 \x01(\tR\tnamespace\x12@\n" +
 	"\x06stream\x18\x02 \x01(\v2(.temporal.api.streamservice.v1.StreamRefR\x06stream\x12C\n" +
@@ -1740,11 +1931,14 @@ const file_temporal_api_streamservice_v1_stream_service_proto_rawDesc = "" +
 	"\x17previous_completed_task\x18\x06 \x01(\v20.temporal.api.streamservice.v1.WorkflowTaskEpochR\x15previousCompletedTask\x12!\n" +
 	"\ffailed_tasks\x18\a \x03(\x03R\vfailedTasks\x12!\n" +
 	"\fwithdraw_run\x18\b \x01(\tR\vwithdrawRun\x12)\n" +
-	"\x10defer_withdrawal\x18\t \x01(\bR\x0fdeferWithdrawal\"[\n" +
+	"\x10defer_withdrawal\x18\t \x01(\bR\x0fdeferWithdrawal\x12\x1d\n" +
+	"\n" +
+	"task_token\x18\n" +
+	" \x01(\fR\ttaskToken\"[\n" +
 	"\x15AppendRecordsResponse\x12!\n" +
 	"\ffirst_offset\x18\x01 \x01(\x03R\vfirstOffset\x12\x1f\n" +
 	"\vlast_offset\x18\x02 \x01(\x03R\n" +
-	"lastOffset\"\xde\x03\n" +
+	"lastOffset\"\xc1\x04\n" +
 	"\x12CloseStreamRequest\x12\x1c\n" +
 	"\tnamespace\x18\x01 \x01(\tR\tnamespace\x12@\n" +
 	"\x06stream\x18\x02 \x01(\v2(.temporal.api.streamservice.v1.StreamRefR\x06stream\x12C\n" +
@@ -1753,8 +1947,12 @@ const file_temporal_api_streamservice_v1_stream_service_proto_rawDesc = "" +
 	"\afailure\x18\x05 \x01(\v2 .temporal.api.failure.v1.FailureR\afailure\x12h\n" +
 	"\x17previous_completed_task\x18\x06 \x01(\v20.temporal.api.streamservice.v1.WorkflowTaskEpochR\x15previousCompletedTask\x12!\n" +
 	"\ffailed_tasks\x18\a \x03(\x03R\vfailedTasks\x12!\n" +
-	"\fwithdraw_run\x18\b \x01(\tR\vwithdrawRun\"\x15\n" +
-	"\x13CloseStreamResponse\"\xee\x03\n" +
+	"\fwithdraw_run\x18\b \x01(\tR\vwithdrawRun\x12B\n" +
+	"\x06status\x18\t \x01(\x0e2*.temporal.api.streamservice.v1.CloseStatusR\x06status\x12\x1d\n" +
+	"\n" +
+	"task_token\x18\n" +
+	" \x01(\fR\ttaskToken\"\x15\n" +
+	"\x13CloseStreamResponse\"\xbe\x04\n" +
 	"\x12ReadRecordsRequest\x12\x1c\n" +
 	"\tnamespace\x18\x01 \x01(\tR\tnamespace\x12@\n" +
 	"\x06stream\x18\x02 \x01(\v2(.temporal.api.streamservice.v1.StreamRefR\x06stream\x12\x1f\n" +
@@ -1770,13 +1968,18 @@ const file_temporal_api_streamservice_v1_stream_service_proto_rawDesc = "" +
 	"\x0etopic_prefixes\x18\n" +
 	" \x03(\tR\rtopicPrefixes\x12\x1b\n" +
 	"\tto_offset\x18\v \x01(\x03R\btoOffset\x12\x1b\n" +
-	"\twake_only\x18\f \x01(\bR\bwakeOnlyJ\x04\b\t\x10\n" +
-	"R\fidle_timeout\"\x91\x01\n" +
+	"\twake_only\x18\f \x01(\bR\bwakeOnly\x12\x12\n" +
+	"\x04last\x18\r \x01(\x05R\x04last\x12\x1b\n" +
+	"\tmax_bytes\x18\x0e \x01(\x03R\bmaxBytes\x12\x1d\n" +
+	"\n" +
+	"floor_from\x18\x0f \x01(\x03R\tfloorFromJ\x04\b\t\x10\n" +
+	"R\fidle_timeout\"\xcc\x01\n" +
 	"\x13ReadRecordsResponse\x12E\n" +
 	"\arecords\x18\x01 \x03(\v2+.temporal.api.streamservice.v1.StreamRecordR\arecords\x12\x1f\n" +
 	"\vnext_offset\x18\x02 \x01(\x03R\n" +
 	"nextOffset\x12\x12\n" +
-	"\x04done\x18\x03 \x01(\bR\x04done\"w\n" +
+	"\x04done\x18\x03 \x01(\bR\x04done\x129\n" +
+	"\x19continue_as_new_suggested\x18\x04 \x01(\bR\x16continueAsNewSuggested\"w\n" +
 	"\x15DescribeStreamRequest\x12\x1c\n" +
 	"\tnamespace\x18\x01 \x01(\tR\tnamespace\x12@\n" +
 	"\x06stream\x18\x02 \x01(\v2(.temporal.api.streamservice.v1.StreamRefR\x06stream\"\xf1\x01\n" +
@@ -1800,7 +2003,14 @@ const file_temporal_api_streamservice_v1_stream_service_proto_rawDesc = "" +
 	"\x1eSTREAM_RECORD_KIND_UNSPECIFIED\x10\x00\x12\x1b\n" +
 	"\x17STREAM_RECORD_KIND_DATA\x10\x01\x12!\n" +
 	"\x1dSTREAM_RECORD_KIND_SUPERSEDED\x10\x02\x12\x1c\n" +
-	"\x18STREAM_RECORD_KIND_CLOSE\x10\x03\"\x04\b\x04\x10\x04*\x17STREAM_RECORD_KIND_IDLE*z\n" +
+	"\x18STREAM_RECORD_KIND_CLOSE\x10\x03\"\x04\b\x04\x10\x04*\x17STREAM_RECORD_KIND_IDLE*\xb4\x01\n" +
+	"\vCloseStatus\x12\x1c\n" +
+	"\x18CLOSE_STATUS_UNSPECIFIED\x10\x00\x12\x1a\n" +
+	"\x16CLOSE_STATUS_COMPLETED\x10\x01\x12\x17\n" +
+	"\x13CLOSE_STATUS_FAILED\x10\x02\x12\x19\n" +
+	"\x15CLOSE_STATUS_CANCELED\x10\x03\x12\x1b\n" +
+	"\x17CLOSE_STATUS_TERMINATED\x10\x04\x12\x1a\n" +
+	"\x16CLOSE_STATUS_TIMED_OUT\x10\x05*z\n" +
 	"\fStreamStatus\x12\x1d\n" +
 	"\x19STREAM_STATUS_UNSPECIFIED\x10\x00\x12\x16\n" +
 	"\x12STREAM_STATUS_OPEN\x10\x01\x12\x18\n" +
@@ -1824,81 +2034,84 @@ func file_temporal_api_streamservice_v1_stream_service_proto_rawDescGZIP() []byt
 	return file_temporal_api_streamservice_v1_stream_service_proto_rawDescData
 }
 
-var file_temporal_api_streamservice_v1_stream_service_proto_enumTypes = make([]protoimpl.EnumInfo, 4)
+var file_temporal_api_streamservice_v1_stream_service_proto_enumTypes = make([]protoimpl.EnumInfo, 5)
 var file_temporal_api_streamservice_v1_stream_service_proto_msgTypes = make([]protoimpl.MessageInfo, 18)
 var file_temporal_api_streamservice_v1_stream_service_proto_goTypes = []any{
 	(ProducerKind)(0),              // 0: temporal.api.streamservice.v1.ProducerKind
 	(StreamRecordKind)(0),          // 1: temporal.api.streamservice.v1.StreamRecordKind
-	(StreamStatus)(0),              // 2: temporal.api.streamservice.v1.StreamStatus
-	(ReadStart)(0),                 // 3: temporal.api.streamservice.v1.ReadStart
-	(*StreamRef)(nil),              // 4: temporal.api.streamservice.v1.StreamRef
-	(*ProducerEpoch)(nil),          // 5: temporal.api.streamservice.v1.ProducerEpoch
-	(*Producer)(nil),               // 6: temporal.api.streamservice.v1.Producer
-	(*WorkflowTaskEpoch)(nil),      // 7: temporal.api.streamservice.v1.WorkflowTaskEpoch
-	(*AppendRecord)(nil),           // 8: temporal.api.streamservice.v1.AppendRecord
-	(*Supersession)(nil),           // 9: temporal.api.streamservice.v1.Supersession
-	(*StreamRecord)(nil),           // 10: temporal.api.streamservice.v1.StreamRecord
-	(*CreateStreamRequest)(nil),    // 11: temporal.api.streamservice.v1.CreateStreamRequest
-	(*CreateStreamResponse)(nil),   // 12: temporal.api.streamservice.v1.CreateStreamResponse
-	(*AppendRecordsRequest)(nil),   // 13: temporal.api.streamservice.v1.AppendRecordsRequest
-	(*AppendRecordsResponse)(nil),  // 14: temporal.api.streamservice.v1.AppendRecordsResponse
-	(*CloseStreamRequest)(nil),     // 15: temporal.api.streamservice.v1.CloseStreamRequest
-	(*CloseStreamResponse)(nil),    // 16: temporal.api.streamservice.v1.CloseStreamResponse
-	(*ReadRecordsRequest)(nil),     // 17: temporal.api.streamservice.v1.ReadRecordsRequest
-	(*ReadRecordsResponse)(nil),    // 18: temporal.api.streamservice.v1.ReadRecordsResponse
-	(*DescribeStreamRequest)(nil),  // 19: temporal.api.streamservice.v1.DescribeStreamRequest
-	(*DescribeStreamResponse)(nil), // 20: temporal.api.streamservice.v1.DescribeStreamResponse
-	(*StreamErrorDetails)(nil),     // 21: temporal.api.streamservice.v1.StreamErrorDetails
-	(*timestamppb.Timestamp)(nil),  // 22: google.protobuf.Timestamp
-	(*v1.Payload)(nil),             // 23: temporal.api.common.v1.Payload
-	(*v11.Failure)(nil),            // 24: temporal.api.failure.v1.Failure
-	(*durationpb.Duration)(nil),    // 25: google.protobuf.Duration
+	(CloseStatus)(0),               // 2: temporal.api.streamservice.v1.CloseStatus
+	(StreamStatus)(0),              // 3: temporal.api.streamservice.v1.StreamStatus
+	(ReadStart)(0),                 // 4: temporal.api.streamservice.v1.ReadStart
+	(*StreamRef)(nil),              // 5: temporal.api.streamservice.v1.StreamRef
+	(*ProducerEpoch)(nil),          // 6: temporal.api.streamservice.v1.ProducerEpoch
+	(*Producer)(nil),               // 7: temporal.api.streamservice.v1.Producer
+	(*WorkflowTaskEpoch)(nil),      // 8: temporal.api.streamservice.v1.WorkflowTaskEpoch
+	(*AppendRecord)(nil),           // 9: temporal.api.streamservice.v1.AppendRecord
+	(*Supersession)(nil),           // 10: temporal.api.streamservice.v1.Supersession
+	(*StreamRecord)(nil),           // 11: temporal.api.streamservice.v1.StreamRecord
+	(*CreateStreamRequest)(nil),    // 12: temporal.api.streamservice.v1.CreateStreamRequest
+	(*CreateStreamResponse)(nil),   // 13: temporal.api.streamservice.v1.CreateStreamResponse
+	(*AppendRecordsRequest)(nil),   // 14: temporal.api.streamservice.v1.AppendRecordsRequest
+	(*AppendRecordsResponse)(nil),  // 15: temporal.api.streamservice.v1.AppendRecordsResponse
+	(*CloseStreamRequest)(nil),     // 16: temporal.api.streamservice.v1.CloseStreamRequest
+	(*CloseStreamResponse)(nil),    // 17: temporal.api.streamservice.v1.CloseStreamResponse
+	(*ReadRecordsRequest)(nil),     // 18: temporal.api.streamservice.v1.ReadRecordsRequest
+	(*ReadRecordsResponse)(nil),    // 19: temporal.api.streamservice.v1.ReadRecordsResponse
+	(*DescribeStreamRequest)(nil),  // 20: temporal.api.streamservice.v1.DescribeStreamRequest
+	(*DescribeStreamResponse)(nil), // 21: temporal.api.streamservice.v1.DescribeStreamResponse
+	(*StreamErrorDetails)(nil),     // 22: temporal.api.streamservice.v1.StreamErrorDetails
+	(*timestamppb.Timestamp)(nil),  // 23: google.protobuf.Timestamp
+	(*v1.Payload)(nil),             // 24: temporal.api.common.v1.Payload
+	(*v11.Failure)(nil),            // 25: temporal.api.failure.v1.Failure
+	(*durationpb.Duration)(nil),    // 26: google.protobuf.Duration
 }
 var file_temporal_api_streamservice_v1_stream_service_proto_depIdxs = []int32{
-	22, // 0: temporal.api.streamservice.v1.ProducerEpoch.task_started_time:type_name -> google.protobuf.Timestamp
-	22, // 1: temporal.api.streamservice.v1.ProducerEpoch.attempt_scheduled_time:type_name -> google.protobuf.Timestamp
+	23, // 0: temporal.api.streamservice.v1.ProducerEpoch.task_started_time:type_name -> google.protobuf.Timestamp
+	23, // 1: temporal.api.streamservice.v1.ProducerEpoch.attempt_scheduled_time:type_name -> google.protobuf.Timestamp
 	0,  // 2: temporal.api.streamservice.v1.Producer.kind:type_name -> temporal.api.streamservice.v1.ProducerKind
-	5,  // 3: temporal.api.streamservice.v1.Producer.epoch:type_name -> temporal.api.streamservice.v1.ProducerEpoch
-	22, // 4: temporal.api.streamservice.v1.WorkflowTaskEpoch.started_time:type_name -> google.protobuf.Timestamp
-	23, // 5: temporal.api.streamservice.v1.AppendRecord.body:type_name -> temporal.api.common.v1.Payload
+	6,  // 3: temporal.api.streamservice.v1.Producer.epoch:type_name -> temporal.api.streamservice.v1.ProducerEpoch
+	23, // 4: temporal.api.streamservice.v1.WorkflowTaskEpoch.started_time:type_name -> google.protobuf.Timestamp
+	24, // 5: temporal.api.streamservice.v1.AppendRecord.body:type_name -> temporal.api.common.v1.Payload
 	0,  // 6: temporal.api.streamservice.v1.Supersession.producer_kind:type_name -> temporal.api.streamservice.v1.ProducerKind
-	5,  // 7: temporal.api.streamservice.v1.Supersession.epoch:type_name -> temporal.api.streamservice.v1.ProducerEpoch
-	7,  // 8: temporal.api.streamservice.v1.Supersession.previous_completed_task:type_name -> temporal.api.streamservice.v1.WorkflowTaskEpoch
+	6,  // 7: temporal.api.streamservice.v1.Supersession.epoch:type_name -> temporal.api.streamservice.v1.ProducerEpoch
+	8,  // 8: temporal.api.streamservice.v1.Supersession.previous_completed_task:type_name -> temporal.api.streamservice.v1.WorkflowTaskEpoch
 	1,  // 9: temporal.api.streamservice.v1.StreamRecord.kind:type_name -> temporal.api.streamservice.v1.StreamRecordKind
-	6,  // 10: temporal.api.streamservice.v1.StreamRecord.producer:type_name -> temporal.api.streamservice.v1.Producer
-	23, // 11: temporal.api.streamservice.v1.StreamRecord.body:type_name -> temporal.api.common.v1.Payload
-	9,  // 12: temporal.api.streamservice.v1.StreamRecord.supersession:type_name -> temporal.api.streamservice.v1.Supersession
-	23, // 13: temporal.api.streamservice.v1.StreamRecord.close_result:type_name -> temporal.api.common.v1.Payload
-	24, // 14: temporal.api.streamservice.v1.StreamRecord.close_failure:type_name -> temporal.api.failure.v1.Failure
-	25, // 15: temporal.api.streamservice.v1.CreateStreamRequest.retention:type_name -> google.protobuf.Duration
-	25, // 16: temporal.api.streamservice.v1.CreateStreamRequest.auto_close:type_name -> google.protobuf.Duration
-	6,  // 17: temporal.api.streamservice.v1.CreateStreamRequest.owner:type_name -> temporal.api.streamservice.v1.Producer
-	4,  // 18: temporal.api.streamservice.v1.CreateStreamRequest.ref:type_name -> temporal.api.streamservice.v1.StreamRef
-	4,  // 19: temporal.api.streamservice.v1.CreateStreamResponse.stream:type_name -> temporal.api.streamservice.v1.StreamRef
-	2,  // 20: temporal.api.streamservice.v1.CreateStreamResponse.status:type_name -> temporal.api.streamservice.v1.StreamStatus
-	4,  // 21: temporal.api.streamservice.v1.AppendRecordsRequest.stream:type_name -> temporal.api.streamservice.v1.StreamRef
-	6,  // 22: temporal.api.streamservice.v1.AppendRecordsRequest.producer:type_name -> temporal.api.streamservice.v1.Producer
-	8,  // 23: temporal.api.streamservice.v1.AppendRecordsRequest.records:type_name -> temporal.api.streamservice.v1.AppendRecord
-	7,  // 24: temporal.api.streamservice.v1.AppendRecordsRequest.previous_completed_task:type_name -> temporal.api.streamservice.v1.WorkflowTaskEpoch
-	4,  // 25: temporal.api.streamservice.v1.CloseStreamRequest.stream:type_name -> temporal.api.streamservice.v1.StreamRef
-	6,  // 26: temporal.api.streamservice.v1.CloseStreamRequest.producer:type_name -> temporal.api.streamservice.v1.Producer
-	23, // 27: temporal.api.streamservice.v1.CloseStreamRequest.result:type_name -> temporal.api.common.v1.Payload
-	24, // 28: temporal.api.streamservice.v1.CloseStreamRequest.failure:type_name -> temporal.api.failure.v1.Failure
-	7,  // 29: temporal.api.streamservice.v1.CloseStreamRequest.previous_completed_task:type_name -> temporal.api.streamservice.v1.WorkflowTaskEpoch
-	4,  // 30: temporal.api.streamservice.v1.ReadRecordsRequest.stream:type_name -> temporal.api.streamservice.v1.StreamRef
-	3,  // 31: temporal.api.streamservice.v1.ReadRecordsRequest.start:type_name -> temporal.api.streamservice.v1.ReadStart
-	25, // 32: temporal.api.streamservice.v1.ReadRecordsRequest.wait:type_name -> google.protobuf.Duration
-	25, // 33: temporal.api.streamservice.v1.ReadRecordsRequest.create_wait:type_name -> google.protobuf.Duration
-	10, // 34: temporal.api.streamservice.v1.ReadRecordsResponse.records:type_name -> temporal.api.streamservice.v1.StreamRecord
-	4,  // 35: temporal.api.streamservice.v1.DescribeStreamRequest.stream:type_name -> temporal.api.streamservice.v1.StreamRef
-	2,  // 36: temporal.api.streamservice.v1.DescribeStreamResponse.status:type_name -> temporal.api.streamservice.v1.StreamStatus
-	25, // 37: temporal.api.streamservice.v1.DescribeStreamResponse.retention:type_name -> google.protobuf.Duration
-	25, // 38: temporal.api.streamservice.v1.DescribeStreamResponse.auto_close:type_name -> google.protobuf.Duration
-	39, // [39:39] is the sub-list for method output_type
-	39, // [39:39] is the sub-list for method input_type
-	39, // [39:39] is the sub-list for extension type_name
-	39, // [39:39] is the sub-list for extension extendee
-	0,  // [0:39] is the sub-list for field type_name
+	7,  // 10: temporal.api.streamservice.v1.StreamRecord.producer:type_name -> temporal.api.streamservice.v1.Producer
+	24, // 11: temporal.api.streamservice.v1.StreamRecord.body:type_name -> temporal.api.common.v1.Payload
+	10, // 12: temporal.api.streamservice.v1.StreamRecord.supersession:type_name -> temporal.api.streamservice.v1.Supersession
+	24, // 13: temporal.api.streamservice.v1.StreamRecord.close_result:type_name -> temporal.api.common.v1.Payload
+	25, // 14: temporal.api.streamservice.v1.StreamRecord.close_failure:type_name -> temporal.api.failure.v1.Failure
+	2,  // 15: temporal.api.streamservice.v1.StreamRecord.close_status:type_name -> temporal.api.streamservice.v1.CloseStatus
+	26, // 16: temporal.api.streamservice.v1.CreateStreamRequest.retention:type_name -> google.protobuf.Duration
+	26, // 17: temporal.api.streamservice.v1.CreateStreamRequest.auto_close:type_name -> google.protobuf.Duration
+	7,  // 18: temporal.api.streamservice.v1.CreateStreamRequest.owner:type_name -> temporal.api.streamservice.v1.Producer
+	5,  // 19: temporal.api.streamservice.v1.CreateStreamRequest.ref:type_name -> temporal.api.streamservice.v1.StreamRef
+	5,  // 20: temporal.api.streamservice.v1.CreateStreamResponse.stream:type_name -> temporal.api.streamservice.v1.StreamRef
+	3,  // 21: temporal.api.streamservice.v1.CreateStreamResponse.status:type_name -> temporal.api.streamservice.v1.StreamStatus
+	5,  // 22: temporal.api.streamservice.v1.AppendRecordsRequest.stream:type_name -> temporal.api.streamservice.v1.StreamRef
+	7,  // 23: temporal.api.streamservice.v1.AppendRecordsRequest.producer:type_name -> temporal.api.streamservice.v1.Producer
+	9,  // 24: temporal.api.streamservice.v1.AppendRecordsRequest.records:type_name -> temporal.api.streamservice.v1.AppendRecord
+	8,  // 25: temporal.api.streamservice.v1.AppendRecordsRequest.previous_completed_task:type_name -> temporal.api.streamservice.v1.WorkflowTaskEpoch
+	5,  // 26: temporal.api.streamservice.v1.CloseStreamRequest.stream:type_name -> temporal.api.streamservice.v1.StreamRef
+	7,  // 27: temporal.api.streamservice.v1.CloseStreamRequest.producer:type_name -> temporal.api.streamservice.v1.Producer
+	24, // 28: temporal.api.streamservice.v1.CloseStreamRequest.result:type_name -> temporal.api.common.v1.Payload
+	25, // 29: temporal.api.streamservice.v1.CloseStreamRequest.failure:type_name -> temporal.api.failure.v1.Failure
+	8,  // 30: temporal.api.streamservice.v1.CloseStreamRequest.previous_completed_task:type_name -> temporal.api.streamservice.v1.WorkflowTaskEpoch
+	2,  // 31: temporal.api.streamservice.v1.CloseStreamRequest.status:type_name -> temporal.api.streamservice.v1.CloseStatus
+	5,  // 32: temporal.api.streamservice.v1.ReadRecordsRequest.stream:type_name -> temporal.api.streamservice.v1.StreamRef
+	4,  // 33: temporal.api.streamservice.v1.ReadRecordsRequest.start:type_name -> temporal.api.streamservice.v1.ReadStart
+	26, // 34: temporal.api.streamservice.v1.ReadRecordsRequest.wait:type_name -> google.protobuf.Duration
+	26, // 35: temporal.api.streamservice.v1.ReadRecordsRequest.create_wait:type_name -> google.protobuf.Duration
+	11, // 36: temporal.api.streamservice.v1.ReadRecordsResponse.records:type_name -> temporal.api.streamservice.v1.StreamRecord
+	5,  // 37: temporal.api.streamservice.v1.DescribeStreamRequest.stream:type_name -> temporal.api.streamservice.v1.StreamRef
+	3,  // 38: temporal.api.streamservice.v1.DescribeStreamResponse.status:type_name -> temporal.api.streamservice.v1.StreamStatus
+	26, // 39: temporal.api.streamservice.v1.DescribeStreamResponse.retention:type_name -> google.protobuf.Duration
+	26, // 40: temporal.api.streamservice.v1.DescribeStreamResponse.auto_close:type_name -> google.protobuf.Duration
+	41, // [41:41] is the sub-list for method output_type
+	41, // [41:41] is the sub-list for method input_type
+	41, // [41:41] is the sub-list for extension type_name
+	41, // [41:41] is the sub-list for extension extendee
+	0,  // [0:41] is the sub-list for field type_name
 }
 
 func init() { file_temporal_api_streamservice_v1_stream_service_proto_init() }
@@ -1911,7 +2124,7 @@ func file_temporal_api_streamservice_v1_stream_service_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_temporal_api_streamservice_v1_stream_service_proto_rawDesc), len(file_temporal_api_streamservice_v1_stream_service_proto_rawDesc)),
-			NumEnums:      4,
+			NumEnums:      5,
 			NumMessages:   18,
 			NumExtensions: 0,
 			NumServices:   0,
