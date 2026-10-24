@@ -38,7 +38,7 @@ const (
 // `__temporal_system` endpoint, under the service name `temporal.api.streamservice.v1.StreamService`.
 // Activities and clients call this gRPC service. Each request names its namespace.
 type StreamServiceClient interface {
-	// CreateStream creates a Stream, idempotently for one id, one Retention and one auto close.
+	// CreateStream creates a Stream, idempotently for one id and one Retention.
 	CreateStream(ctx context.Context, in *CreateStreamRequest, opts ...grpc.CallOption) (*CreateStreamResponse, error)
 	// AppendRecords appends a batch of Records to an open Stream.
 	AppendRecords(ctx context.Context, in *AppendRecordsRequest, opts ...grpc.CallOption) (*AppendRecordsResponse, error)
@@ -48,8 +48,7 @@ type StreamServiceClient interface {
 	// ReadRecords reads Records from an offset. It is a long poll that waits up to `wait` for a
 	// new Record and up to `create_wait` for a Stream that nobody created yet.
 	ReadRecords(ctx context.Context, in *ReadRecordsRequest, opts ...grpc.CallOption) (*ReadRecordsResponse, error)
-	// DescribeStream answers the status, the newest offset, the Retention and the auto close of
-	// a Stream.
+	// DescribeStream answers the status, the newest offset and the Retention of a Stream.
 	DescribeStream(ctx context.Context, in *DescribeStreamRequest, opts ...grpc.CallOption) (*DescribeStreamResponse, error)
 }
 
@@ -122,7 +121,7 @@ func (c *streamServiceClient) DescribeStream(ctx context.Context, in *DescribeSt
 // `__temporal_system` endpoint, under the service name `temporal.api.streamservice.v1.StreamService`.
 // Activities and clients call this gRPC service. Each request names its namespace.
 type StreamServiceServer interface {
-	// CreateStream creates a Stream, idempotently for one id, one Retention and one auto close.
+	// CreateStream creates a Stream, idempotently for one id and one Retention.
 	CreateStream(context.Context, *CreateStreamRequest) (*CreateStreamResponse, error)
 	// AppendRecords appends a batch of Records to an open Stream.
 	AppendRecords(context.Context, *AppendRecordsRequest) (*AppendRecordsResponse, error)
@@ -132,8 +131,7 @@ type StreamServiceServer interface {
 	// ReadRecords reads Records from an offset. It is a long poll that waits up to `wait` for a
 	// new Record and up to `create_wait` for a Stream that nobody created yet.
 	ReadRecords(context.Context, *ReadRecordsRequest) (*ReadRecordsResponse, error)
-	// DescribeStream answers the status, the newest offset, the Retention and the auto close of
-	// a Stream.
+	// DescribeStream answers the status, the newest offset and the Retention of a Stream.
 	DescribeStream(context.Context, *DescribeStreamRequest) (*DescribeStreamResponse, error)
 	mustEmbedUnimplementedStreamServiceServer()
 }
